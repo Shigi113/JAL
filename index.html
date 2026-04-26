@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Jengalabs Afritech Limited — Powering Africa's Digital Future</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&amp;family=DM+Sans:wght@300;400;500&amp;family=Space+Mono:wght@400;700&amp;display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -27,8 +27,16 @@
     .nav-cta { padding: 0.6rem 1.4rem; background: var(--accent); color: #fff !important; border-radius: 6px; font-weight: 600 !important; letter-spacing: 0.02em !important; text-transform: none !important; transition: background 0.2s, transform 0.2s !important; }
     .nav-cta:hover { background: #1a7059 !important; transform: translateY(-1px); }
     .hero { position: relative; z-index: 1; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; padding: 120px 4vw 80px; overflow: hidden; }
-    .hero-eyebrow { display: inline-flex; align-items: center; gap: 8px; font-family: 'Space Mono', monospace; font-size: 0.7rem; color: var(--teal); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 2rem; opacity: 0; animation: fadeUp 0.8s 0.3s forwards; }
-    .hero-eyebrow::before { content: ''; display: block; width: 32px; height: 1px; background: var(--teal); }
+    .hero-eyebrow { display: inline-flex; align-items: center; gap: 10px; font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 2rem; opacity: 0; animation: fadeUp 0.8s 0.3s forwards; min-height: 1.4em; }
+    .hero-eyebrow::before { content: ''; display: block; width: 32px; height: 1px; background: var(--teal); flex-shrink: 0; }
+    .typewriter { display: inline-block; position: relative; transition: color 0.3s ease; }
+    .typewriter-text { display: inline-block; }
+    .typewriter-cursor { display: inline-block; width: 2px; height: 1em; background: currentColor; margin-left: 3px; vertical-align: -2px; animation: caretBlink 1s steps(2) infinite; }
+    @keyframes caretBlink { 50% { opacity: 0; } }
+    /* Three distinct phrase styles */
+    .phrase-sleek { font-family: 'Space Mono', monospace; color: var(--teal); font-weight: 400; letter-spacing: 0.18em; }
+    .phrase-trusted { font-family: 'Syne', sans-serif; color: var(--accent, #d4a574); font-weight: 700; letter-spacing: 0.22em; font-style: italic; }
+    .phrase-quality { font-family: 'Space Mono', monospace; color: transparent; -webkit-text-stroke: 0.8px var(--teal); font-weight: 700; letter-spacing: 0.25em; }
     .hero-headline { font-family: 'Syne', sans-serif; font-weight: 800; font-size: clamp(3rem, 7vw, 6.5rem); line-height: 0.95; letter-spacing: -0.03em; max-width: 900px; opacity: 0; animation: fadeUp 0.9s 0.5s forwards; }
     .hero-headline em { font-style: normal; -webkit-text-stroke: 1.5px var(--accent); color: transparent; }
     .hero-sub { margin-top: 2rem; font-size: clamp(1rem, 1.5vw, 1.2rem); color: var(--muted); max-width: 520px; line-height: 1.7; font-weight: 300; opacity: 0; animation: fadeUp 0.9s 0.7s forwards; }
@@ -321,7 +329,7 @@
     </div>
   </div>
   <section class="hero">
-    <div class="hero-eyebrow">Sleek Experience, Trusted Services, Quality Devices</div>
+    <div class="hero-eyebrow"><span class="typewriter" id="heroTypewriter" aria-live="polite"><span class="typewriter-text"></span><span class="typewriter-cursor" aria-hidden="true"></span></span></div>
     <h1 class="hero-headline">Less Hustle<br><em>More Business</em><br></h1>
     <p class="hero-sub">Jengalabs Afritech delivers end-to-end technology solutions — from IT equipment supply to enterprise systems deployment — built for African businesses.</p>
     <div class="hero-actions">
@@ -455,141 +463,428 @@
     </div>
     <div class="footer-bottom">
       <p>© 2025 Jengalabs Afritech Limited. All rights reserved.</p>
+    </div>
   </footer>
   <script>
-    // ── Scroll progress ──────────────────────────────────────────────────────
-    const scrollProgress = document.getElementById('scrollProgress');
-    window.addEventListener('scroll', () => { const scrolled = (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100; scrollProgress.style.width = scrolled + '%'; });
+    // ── Helpers ──────────────────────────────────────────────────────────────
+    const $ = (sel, root = document) => root.querySelector(sel);
+    const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+    const isTouch = window.matchMedia('(hover: none), (pointer: coarse)').matches;
 
-    // ── Custom cursor ─────────────────────────────────────────────────────────
-    const cursor = document.getElementById('cursor');
-    const ring = document.getElementById('cursorRing');
-    let mx = 0, my = 0, rx = 0, ry = 0;
-    document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; cursor.style.left = mx - 6 + 'px'; cursor.style.top = my - 6 + 'px'; });
-    (function animRing() { rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12; ring.style.left = rx - 18 + 'px'; ring.style.top = ry - 18 + 'px'; requestAnimationFrame(animRing); })();
-    document.querySelectorAll('a, button, .service-card, .process-step').forEach(el => { el.addEventListener('mouseenter', () => { cursor.style.transform = 'scale(2)'; ring.style.transform = 'scale(1.5)'; }); el.addEventListener('mouseleave', () => { cursor.style.transform = 'scale(1)'; ring.style.transform = 'scale(1)'; }); });
+    // ── Hero typewriter (cycles three phrases, each with its own style) ──────
+    (() => {
+      const tw = document.getElementById('heroTypewriter');
+      if (!tw) return;
+      const textEl = tw.querySelector('.typewriter-text');
+      const phrases = [
+        { text: 'Sleek Experience', cls: 'phrase-sleek' },
+        { text: 'Trusted Services', cls: 'phrase-trusted' },
+        { text: 'Quality Devices',  cls: 'phrase-quality' },
+      ];
+      const TYPE_MS = 75, ERASE_MS = 40, HOLD_MS = 1600, GAP_MS = 350;
+      let i = 0;
+      const setClass = (cls) => {
+        textEl.classList.remove('phrase-sleek', 'phrase-trusted', 'phrase-quality');
+        textEl.classList.add(cls);
+      };
+      const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+      (async function loop() {
+        while (true) {
+          const { text, cls } = phrases[i];
+          setClass(cls);
+          for (let n = 1; n <= text.length; n++) {
+            textEl.textContent = text.slice(0, n);
+            await sleep(TYPE_MS);
+          }
+          await sleep(HOLD_MS);
+          for (let n = text.length; n >= 0; n--) {
+            textEl.textContent = text.slice(0, n);
+            await sleep(ERASE_MS);
+          }
+          await sleep(GAP_MS);
+          i = (i + 1) % phrases.length;
+        }
+      })();
+    })();
+
+    // ── Scroll progress ──────────────────────────────────────────────────────
+    const scrollProgress = $('#scrollProgress');
+    if (scrollProgress) {
+      window.addEventListener('scroll', () => {
+        const max = document.body.scrollHeight - window.innerHeight;
+        const scrolled = max > 0 ? (window.scrollY / max) * 100 : 0;
+        scrollProgress.style.width = scrolled + '%';
+      }, { passive: true });
+    }
+
+    // ── Custom cursor (disabled on touch devices) ────────────────────────────
+    const cursor = $('#cursor');
+    const ring = $('#cursorRing');
+    if (isTouch) {
+      document.body.style.cursor = 'auto';
+      if (cursor) cursor.style.display = 'none';
+      if (ring) ring.style.display = 'none';
+    } else if (cursor && ring) {
+      let mx = 0, my = 0, rx = 0, ry = 0;
+      document.addEventListener('mousemove', e => {
+        mx = e.clientX; my = e.clientY;
+        cursor.style.left = (mx - 6) + 'px';
+        cursor.style.top  = (my - 6) + 'px';
+      });
+      (function animRing() {
+        rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
+        ring.style.left = (rx - 18) + 'px';
+        ring.style.top  = (ry - 18) + 'px';
+        requestAnimationFrame(animRing);
+      })();
+      $$('a, button, .service-card, .process-step').forEach(el => {
+        el.addEventListener('mouseenter', () => { cursor.style.transform = 'scale(2)'; ring.style.transform = 'scale(1.5)'; });
+        el.addEventListener('mouseleave', () => { cursor.style.transform = 'scale(1)'; ring.style.transform = 'scale(1)'; });
+      });
+    }
 
     // ── Mobile nav ────────────────────────────────────────────────────────────
-    const menuToggle = document.getElementById('menuToggle');
-    const navLinks = document.getElementById('navLinks');
-    menuToggle.addEventListener('click', () => { menuToggle.classList.toggle('active'); navLinks.classList.toggle('open'); document.body.style.overflow = navLinks.classList.contains('open') ? 'hidden' : ''; });
-    navLinks.querySelectorAll('a').forEach(link => { link.addEventListener('click', () => { menuToggle.classList.remove('active'); navLinks.classList.remove('open'); document.body.style.overflow = ''; }); });
+    const menuToggle = $('#menuToggle');
+    const navLinks = $('#navLinks');
+    if (menuToggle && navLinks) {
+      menuToggle.addEventListener('click', () => {
+        menuToggle.classList.toggle('active');
+        navLinks.classList.toggle('open');
+        document.body.style.overflow = navLinks.classList.contains('open') ? 'hidden' : '';
+      });
+      navLinks.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+          menuToggle.classList.remove('active');
+          navLinks.classList.remove('open');
+          document.body.style.overflow = '';
+        });
+      });
+    }
 
     // ── Quote modal ───────────────────────────────────────────────────────────
-    const modalOverlay = document.getElementById('modalOverlay');
-    const modalClose = document.getElementById('modalClose');
-    document.querySelectorAll('[data-modal-open]').forEach(btn => { btn.addEventListener('click', e => { if (btn.getAttribute('href') === '#contact' || btn.classList.contains('nav-cta')) { e.preventDefault(); modalOverlay.classList.add('open'); document.body.style.overflow = 'hidden'; } }); });
-    modalClose.addEventListener('click', () => { modalOverlay.classList.remove('open'); document.body.style.overflow = ''; });
-    modalOverlay.addEventListener('click', e => { if (e.target === modalOverlay) { modalOverlay.classList.remove('open'); document.body.style.overflow = ''; } });
-    document.addEventListener('keydown', e => { if (e.key === 'Escape' && modalOverlay.classList.contains('open')) { modalOverlay.classList.remove('open'); document.body.style.overflow = ''; } });
+    const modalOverlay = $('#modalOverlay');
+    const modalClose = $('#modalClose');
+    const openModal = () => { if (!modalOverlay) return; modalOverlay.classList.add('open'); document.body.style.overflow = 'hidden'; };
+    const closeModal = () => { if (!modalOverlay) return; modalOverlay.classList.remove('open'); document.body.style.overflow = ''; };
+    $$('[data-modal-open]').forEach(btn => {
+      btn.addEventListener('click', e => {
+        if (btn.getAttribute('href') === '#contact' || btn.classList.contains('nav-cta')) {
+          e.preventDefault();
+          openModal();
+        }
+      });
+    });
+    if (modalClose) modalClose.addEventListener('click', closeModal);
+    if (modalOverlay) modalOverlay.addEventListener('click', e => { if (e.target === modalOverlay) closeModal(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && modalOverlay && modalOverlay.classList.contains('open')) closeModal(); });
 
     // ── Expandable service cards ──────────────────────────────────────────────
-    document.querySelectorAll('[data-expandable]').forEach(card => { card.addEventListener('click', function() { const isActive = this.classList.contains('active'); document.querySelectorAll('[data-expandable]').forEach(c => c.classList.remove('active')); if (!isActive) this.classList.add('active'); }); });
+    $$('[data-expandable]').forEach(card => {
+      card.addEventListener('click', function () {
+        const isActive = this.classList.contains('active');
+        $$('[data-expandable]').forEach(c => c.classList.remove('active'));
+        if (!isActive) this.classList.add('active');
+      });
+    });
 
     // ── Form submit button ripple ─────────────────────────────────────────────
-    document.querySelector('.form-submit').addEventListener('click', function() { const ripple = document.createElement('span'); ripple.classList.add('ripple'); this.appendChild(ripple); setTimeout(() => ripple.remove(), 600); });
+    const formSubmitBtn = $('.form-submit');
+    if (formSubmitBtn) {
+      formSubmitBtn.addEventListener('click', function () {
+        const ripple = document.createElement('span');
+        ripple.classList.add('ripple');
+        this.appendChild(ripple);
+        setTimeout(() => ripple.remove(), 600);
+      });
+    }
 
     // ── Magnetic buttons ─────────────────────────────────────────────────────
-    document.querySelectorAll('.magnetic').forEach(btn => { btn.addEventListener('mousemove', e => { const rect = btn.getBoundingClientRect(); const x = e.clientX - rect.left - rect.width / 2; const y = e.clientY - rect.top - rect.height / 2; btn.style.transform = 'translate(' + (x * 0.3) + 'px, ' + (y * 0.3) + 'px)'; }); btn.addEventListener('mouseleave', () => { btn.style.transform = 'translate(0, 0)'; }); });
+    if (!isTouch) {
+      $$('.magnetic').forEach(btn => {
+        btn.addEventListener('mousemove', e => {
+          const rect = btn.getBoundingClientRect();
+          const x = e.clientX - rect.left - rect.width / 2;
+          const y = e.clientY - rect.top - rect.height / 2;
+          btn.style.transform = 'translate(' + (x * 0.3) + 'px, ' + (y * 0.3) + 'px)';
+        });
+        btn.addEventListener('mouseleave', () => { btn.style.transform = 'translate(0, 0)'; });
+      });
+    }
 
     // ── Parallax ──────────────────────────────────────────────────────────────
-    const parallaxBgs = document.querySelectorAll('[data-parallax]');
-    window.addEventListener('scroll', () => { const scrolled = window.scrollY; parallaxBgs.forEach(bg => { bg.style.transform = 'translateY(' + (scrolled * parseFloat(bg.dataset.parallax)) + 'px)'; }); });
+    const parallaxBgs = $$('[data-parallax]');
+    if (parallaxBgs.length) {
+      let parallaxTicking = false;
+      window.addEventListener('scroll', () => {
+        if (parallaxTicking) return;
+        parallaxTicking = true;
+        requestAnimationFrame(() => {
+          const scrolled = window.scrollY;
+          parallaxBgs.forEach(bg => {
+            bg.style.transform = 'translateY(' + (scrolled * parseFloat(bg.dataset.parallax)) + 'px)';
+          });
+          parallaxTicking = false;
+        });
+      }, { passive: true });
+    }
 
     // ── Active nav on scroll ──────────────────────────────────────────────────
-    const sections = document.querySelectorAll('section[id]');
-    const navLinksAll = document.querySelectorAll('.nav-links a');
-    function updateActiveNav() { const scrollPos = window.scrollY + 150; sections.forEach(section => { if (scrollPos >= section.offsetTop && scrollPos < section.offsetTop + section.offsetHeight) { navLinksAll.forEach(link => { link.classList.remove('active'); if (link.getAttribute('href') === '#' + section.id) link.classList.add('active'); }); } }); }
-    window.addEventListener('scroll', updateActiveNav);
+    const sections = $$('section[id]');
+    const navLinksAll = $$('.nav-links a');
+    function updateActiveNav() {
+      const scrollPos = window.scrollY + 150;
+      sections.forEach(section => {
+        if (scrollPos >= section.offsetTop && scrollPos < section.offsetTop + section.offsetHeight) {
+          navLinksAll.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === '#' + section.id) link.classList.add('active');
+          });
+        }
+      });
+    }
+    window.addEventListener('scroll', updateActiveNav, { passive: true });
 
-    // ── Scroll-to-top button (Fix #4) ─────────────────────────────────────────
-    const scrollTopBtn = document.getElementById('scrollTopBtn');
-    window.addEventListener('scroll', () => { scrollTopBtn.classList.toggle('visible', window.scrollY > 500); });
-    scrollTopBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    // ── Scroll-to-top button ─────────────────────────────────────────────────
+    const scrollTopBtn = $('#scrollTopBtn');
+    if (scrollTopBtn) {
+      window.addEventListener('scroll', () => {
+        scrollTopBtn.classList.toggle('visible', window.scrollY > 500);
+      }, { passive: true });
+      scrollTopBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    }
 
     // ── CTA glow pulse ────────────────────────────────────────────────────────
-    const ctaBtn = document.querySelector('.cta-section .btn-primary');
-    if (ctaBtn) { setInterval(() => ctaBtn.classList.toggle('glow-pulse'), 4000); }
+    const ctaBtn = $('.cta-section .btn-primary');
+    if (ctaBtn) setInterval(() => ctaBtn.classList.toggle('glow-pulse'), 4000);
 
     // ── Counter animation ────────────────────────────────────────────────────
-    function animateCounter(el, target, suffix) { let start = 0; const dur = 2500; const step = timestamp => { if (!start) start = timestamp; const progress = Math.min((timestamp - start) / dur, 1); const easeOut = 1 - Math.pow(1 - progress, 4); el.textContent = Math.floor(easeOut * target) + suffix; if (progress < 1) requestAnimationFrame(step); else el.textContent = target + suffix; }; requestAnimationFrame(step); }
-    const statsObserver = new IntersectionObserver(entries => { if (entries[0].isIntersecting) { const nums = document.querySelectorAll('.stat-num'); animateCounter(nums[0], 500, '+'); animateCounter(nums[1], 200, '+'); animateCounter(nums[2], 7, ''); nums[3].textContent = '24/7'; statsObserver.disconnect(); } }, { threshold: 0.5 });
-    statsObserver.observe(document.querySelector('.stats-bar'));
+    function animateCounter(el, target, suffix) {
+      if (!el) return;
+      let start = 0; const dur = 2500;
+      const step = ts => {
+        if (!start) start = ts;
+        const progress = Math.min((ts - start) / dur, 1);
+        const easeOut = 1 - Math.pow(1 - progress, 4);
+        el.textContent = Math.floor(easeOut * target) + suffix;
+        if (progress < 1) requestAnimationFrame(step);
+        else el.textContent = target + suffix;
+      };
+      requestAnimationFrame(step);
+    }
+    const statsBar = $('.stats-bar');
+    if (statsBar) {
+      const statsObserver = new IntersectionObserver(entries => {
+        if (entries[0].isIntersecting) {
+          const nums = $$('.stat-num');
+          animateCounter(nums[0], 500, '+');
+          animateCounter(nums[1], 200, '+');
+          animateCounter(nums[2], 7, '');
+          if (nums[3]) nums[3].textContent = '24/7';
+          statsObserver.disconnect();
+        }
+      }, { threshold: 0.5 });
+      statsObserver.observe(statsBar);
+    }
 
     // ── Scroll reveal ────────────────────────────────────────────────────────
-    const io = new IntersectionObserver(entries => { entries.forEach((e, i) => { if (e.isIntersecting) { e.target.style.transitionDelay = (i % 3) * 0.1 + 's'; e.target.classList.add('in-view'); } }); }, { threshold: 0.1 });
-    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+    const io = new IntersectionObserver(entries => {
+      entries.forEach((e, i) => {
+        if (e.isIntersecting) {
+          e.target.style.transitionDelay = (i % 3) * 0.1 + 's';
+          e.target.classList.add('in-view');
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.1 });
+    $$('.reveal').forEach(el => io.observe(el));
 
-    // ── Canvas background (Fix #10 — pauses when hidden) ─────────────────────
-    const canvas = document.getElementById('bg-canvas');
-    const ctx = canvas.getContext('2d');
-    let W, H, particles = [], rafId, canvasVisible = true;
-    function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
-    resize();
-    window.addEventListener('resize', resize);
-    for (let i = 0; i < 60; i++) { particles.push({ x: Math.random() * W, y: Math.random() * H, vx: (Math.random() - 0.5) * 0.3, vy: (Math.random() - 0.5) * 0.3, r: Math.random() * 1.5 + 0.5, alpha: Math.random() * 0.5 + 0.1 }); }
-    function drawGrid() { ctx.strokeStyle = 'rgba(33,137,116,0.04)'; ctx.lineWidth = 1; const gs = 80; for (let x = 0; x < W; x += gs) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); } for (let y = 0; y < H; y += gs) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); } }
-    function drawParticles() { particles.forEach(p => { p.x += p.vx; p.y += p.vy; if (p.x < 0) p.x = W; if (p.x > W) p.x = 0; if (p.y < 0) p.y = H; if (p.y > H) p.y = 0; ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.fillStyle = 'rgba(33,137,116,' + p.alpha + ')'; ctx.fill(); }); for (let i = 0; i < particles.length; i++) { for (let j = i + 1; j < particles.length; j++) { const dx = particles[i].x - particles[j].x; const dy = particles[i].y - particles[j].y; const dist = Math.sqrt(dx * dx + dy * dy); if (dist < 120) { ctx.beginPath(); ctx.moveTo(particles[i].x, particles[i].y); ctx.lineTo(particles[j].x, particles[j].y); ctx.strokeStyle = 'rgba(33,137,116,' + (0.06 * (1 - dist / 120)) + ')'; ctx.lineWidth = 0.5; ctx.stroke(); } } } }
-    function animate() { if (!canvasVisible) { rafId = requestAnimationFrame(animate); return; } ctx.clearRect(0, 0, W, H); drawGrid(); drawParticles(); rafId = requestAnimationFrame(animate); }
-    animate();
-    // Pause when tab is hidden
-    document.addEventListener('visibilitychange', () => { canvasVisible = !document.hidden; });
-    // Also pause via IntersectionObserver when canvas scrolls out of view
-    new IntersectionObserver(entries => { canvasVisible = entries[0].isIntersecting; }, { threshold: 0 }).observe(canvas);
+    // ── Canvas background ────────────────────────────────────────────────────
+    const canvas = $('#bg-canvas');
+    if (canvas && canvas.getContext) {
+      const ctx = canvas.getContext('2d');
+      let W, H, particles = [], canvasVisible = true;
+      function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+      resize();
+      window.addEventListener('resize', resize);
+      for (let i = 0; i < 60; i++) {
+        particles.push({
+          x: Math.random() * W, y: Math.random() * H,
+          vx: (Math.random() - 0.5) * 0.3, vy: (Math.random() - 0.5) * 0.3,
+          r: Math.random() * 1.5 + 0.5, alpha: Math.random() * 0.5 + 0.1
+        });
+      }
+      function drawGrid() {
+        ctx.strokeStyle = 'rgba(33,137,116,0.04)'; ctx.lineWidth = 1; const gs = 80;
+        for (let x = 0; x < W; x += gs) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
+        for (let y = 0; y < H; y += gs) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
+      }
+      function drawParticles() {
+        particles.forEach(p => {
+          p.x += p.vx; p.y += p.vy;
+          if (p.x < 0) p.x = W; if (p.x > W) p.x = 0;
+          if (p.y < 0) p.y = H; if (p.y > H) p.y = 0;
+          ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(33,137,116,' + p.alpha + ')'; ctx.fill();
+        });
+        for (let i = 0; i < particles.length; i++) {
+          for (let j = i + 1; j < particles.length; j++) {
+            const dx = particles[i].x - particles[j].x;
+            const dy = particles[i].y - particles[j].y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < 120) {
+              ctx.beginPath();
+              ctx.moveTo(particles[i].x, particles[i].y);
+              ctx.lineTo(particles[j].x, particles[j].y);
+              ctx.strokeStyle = 'rgba(33,137,116,' + (0.06 * (1 - dist / 120)) + ')';
+              ctx.lineWidth = 0.5; ctx.stroke();
+            }
+          }
+        }
+      }
+      function animate() {
+        if (canvasVisible) { ctx.clearRect(0, 0, W, H); drawGrid(); drawParticles(); }
+        requestAnimationFrame(animate);
+      }
+      animate();
+      document.addEventListener('visibilitychange', () => { canvasVisible = !document.hidden; });
+    }
 
-    // ── Quiz modal (Fix #8 — validate before advancing) ───────────────────────
-    const quizModal = document.getElementById('quizModal');
-    const quizClose = document.getElementById('quizClose');
-    const quizBack = document.getElementById('quizBack');
-    const quizNext = document.getElementById('quizNext');
-    const quizSteps = document.querySelectorAll('.quiz-step');
-    const quizProgressDots = document.querySelectorAll('.quiz-progress-dot');
-    const quizOptions = document.querySelectorAll('.quiz-option');
+    // ── Quiz modal ────────────────────────────────────────────────────────────
+    const quizModal = $('#quizModal');
+    const quizClose = $('#quizClose');
+    const quizBack = $('#quizBack');
+    const quizNext = $('#quizNext');
+    const quizSteps = $$('.quiz-step');
+    const quizProgressDots = $$('.quiz-progress-dot');
+    const quizOptions = $$('.quiz-option');
     let currentStep = 1;
     const quizAnswers = {};
-    document.querySelectorAll('[data-quiz-open]').forEach(btn => { btn.addEventListener('click', () => { quizModal.classList.add('open'); document.body.style.overflow = 'hidden'; }); });
-    quizClose.addEventListener('click', () => { quizModal.classList.remove('open'); document.body.style.overflow = ''; resetQuiz(); });
-    quizModal.addEventListener('click', e => { if (e.target === quizModal) { quizModal.classList.remove('open'); document.body.style.overflow = ''; resetQuiz(); } });
-    quizOptions.forEach(opt => { opt.addEventListener('click', function() { const step = this.closest('.quiz-step').dataset.step; quizAnswers[step] = this.dataset.value; this.parentElement.querySelectorAll('.quiz-option').forEach(o => o.classList.remove('selected')); this.classList.add('selected'); if (step === '3') { quizNext.disabled = false; quizNext.style.opacity = '1'; } else { setTimeout(() => goToStep(parseInt(step) + 1), 300); } }); });
-    quizBack.addEventListener('click', () => { if (currentStep > 1) goToStep(currentStep - 1); });
-    // Fix #8: guard — only allow Next if an option was selected on step 3
-    quizNext.addEventListener('click', () => { if (!quizAnswers[3]) { quizNext.classList.add('shake'); setTimeout(() => quizNext.classList.remove('shake'), 400); return; } goToStep('result'); });
-    function goToStep(step) { currentStep = step; quizSteps.forEach(s => s.classList.remove('active')); document.querySelector('[data-step="' + step + '"]').classList.add('active'); quizProgressDots.forEach((dot, i) => { dot.classList.remove('active', 'completed'); if (i < step - 1) dot.classList.add('completed'); if (i === step - 1) dot.classList.add('active'); }); quizBack.style.visibility = step > 1 && step !== 'result' ? 'visible' : 'hidden'; quizNext.style.display = step === 3 ? 'inline-flex' : 'none'; if (step === 3) { quizNext.disabled = !quizAnswers[3]; quizNext.style.opacity = quizAnswers[3] ? '1' : '0.5'; } if (step === 'result') showQuizResult(); }
-    function showQuizResult() { const resultText = document.getElementById('quizResultText'); document.querySelector('.success-check').classList.add('show'); const map = { compliance: 'Our eTIMS Integration service is perfect for KRA compliance!', infrastructure: 'We recommend our IT Equipment Supply & Network Deployment.', digital: 'Our Web & App Development team can build your digital presence.', efficiency: 'Systems Deployment (ERP/POS) will streamline your operations.' }; resultText.textContent = map[quizAnswers[2]] || 'Schedule a free consultation and we will find the perfect solution.'; }
-    function resetQuiz() { currentStep = 1; quizAnswers[1] = quizAnswers[2] = quizAnswers[3] = ''; quizOptions.forEach(o => o.classList.remove('selected')); document.querySelector('.quiz-step[data-step="result"] .success-check')?.classList.remove('show'); goToStep(1); }
 
-    // ── EmailJS form (Fix #5) ─────────────────────────────────────────────────
-    emailjs.init('YOUR_EMAILJS_PUBLIC_KEY'); // ← Replace with your EmailJS public key
-    const contactForm = document.getElementById('contactForm');
-    const formSuccess = document.getElementById('formSuccess');
-    const formError = document.getElementById('formError');
+    if (quizModal) {
+      $$('[data-quiz-open]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          quizModal.classList.add('open');
+          document.body.style.overflow = 'hidden';
+        });
+      });
+      if (quizClose) quizClose.addEventListener('click', () => { quizModal.classList.remove('open'); document.body.style.overflow = ''; resetQuiz(); });
+      quizModal.addEventListener('click', e => {
+        if (e.target === quizModal) { quizModal.classList.remove('open'); document.body.style.overflow = ''; resetQuiz(); }
+      });
+
+      quizOptions.forEach(opt => {
+        opt.addEventListener('click', function () {
+          const step = this.closest('.quiz-step').dataset.step;
+          quizAnswers[step] = this.dataset.value;
+          this.parentElement.querySelectorAll('.quiz-option').forEach(o => o.classList.remove('selected'));
+          this.classList.add('selected');
+          if (step === '3') {
+            if (quizNext) { quizNext.disabled = false; quizNext.style.opacity = '1'; }
+          } else {
+            setTimeout(() => goToStep(parseInt(step, 10) + 1), 300);
+          }
+        });
+      });
+
+      if (quizBack) quizBack.addEventListener('click', () => { if (typeof currentStep === 'number' && currentStep > 1) goToStep(currentStep - 1); });
+      if (quizNext) quizNext.addEventListener('click', () => {
+        if (!quizAnswers['3']) {
+          quizNext.classList.add('shake');
+          setTimeout(() => quizNext.classList.remove('shake'), 400);
+          return;
+        }
+        goToStep('result');
+      });
+    }
+
+    function goToStep(step) {
+      currentStep = step;
+      quizSteps.forEach(s => s.classList.remove('active'));
+      const target = document.querySelector('[data-step="' + step + '"]');
+      if (target) target.classList.add('active');
+      const isResult = step === 'result';
+      const stepNum = isResult ? quizSteps.length : parseInt(step, 10);
+      quizProgressDots.forEach((dot, i) => {
+        dot.classList.remove('active', 'completed');
+        if (i < stepNum - 1) dot.classList.add('completed');
+        if (i === stepNum - 1) dot.classList.add('active');
+      });
+      if (quizBack) quizBack.style.visibility = (!isResult && stepNum > 1) ? 'visible' : 'hidden';
+      if (quizNext) {
+        quizNext.style.display = step === 3 || step === '3' ? 'inline-flex' : 'none';
+        if (step === 3 || step === '3') {
+          quizNext.disabled = !quizAnswers['3'];
+          quizNext.style.opacity = quizAnswers['3'] ? '1' : '0.5';
+        }
+      }
+      if (isResult) showQuizResult();
+    }
+
+    function showQuizResult() {
+      const resultText = $('#quizResultText');
+      // Scope to the quiz result step — the document also has another .success-check in the form.
+      const check = document.querySelector('.quiz-step[data-step="result"] .success-check');
+      if (check) check.classList.add('show');
+      const map = {
+        compliance:     'Our eTIMS Integration service is perfect for KRA compliance!',
+        infrastructure: 'We recommend our IT Equipment Supply & Network Deployment.',
+        digital:        'Our Web & App Development team can build your digital presence.',
+        efficiency:     'Systems Deployment (ERP/POS) will streamline your operations.'
+      };
+      if (resultText) resultText.textContent = map[quizAnswers['2']] || 'Schedule a free consultation and we will find the perfect solution.';
+    }
+
+    function resetQuiz() {
+      currentStep = 1;
+      quizAnswers['1'] = quizAnswers['2'] = quizAnswers['3'] = '';
+      quizOptions.forEach(o => o.classList.remove('selected'));
+      const check = document.querySelector('.quiz-step[data-step="result"] .success-check');
+      if (check) check.classList.remove('show');
+      goToStep(1);
+    }
+
+    // ── EmailJS form ─────────────────────────────────────────────────────────
+    // ⚠️  Replace the three placeholders below with your real EmailJS credentials.
+    const EMAILJS_PUBLIC_KEY = 'YOUR_EMAILJS_PUBLIC_KEY';
+    const EMAILJS_SERVICE_ID = 'YOUR_SERVICE_ID';
+    const EMAILJS_TEMPLATE_ID = 'YOUR_TEMPLATE_ID';
+    const emailjsReady = (typeof emailjs !== 'undefined') &&
+      EMAILJS_PUBLIC_KEY && !EMAILJS_PUBLIC_KEY.startsWith('YOUR_');
+    if (emailjsReady) {
+      try { emailjs.init(EMAILJS_PUBLIC_KEY); } catch (err) { console.warn('EmailJS init failed:', err); }
+    }
+
+    const contactForm = $('#contactForm');
+    const formSuccess = $('#formSuccess');
+    const formError = $('#formError');
     if (contactForm) {
-      contactForm.addEventListener('submit', async function(e) {
+      contactForm.addEventListener('submit', async function (e) {
         e.preventDefault();
         const submitBtn = this.querySelector('.form-submit');
         submitBtn.textContent = 'Sending…';
         submitBtn.disabled = true;
-        formError.style.display = 'none';
+        if (formError) formError.style.display = 'none';
         try {
-          await emailjs.sendForm(
-            'YOUR_SERVICE_ID',    // ← Replace with your EmailJS service ID
-            'YOUR_TEMPLATE_ID',   // ← Replace with your EmailJS template ID
-            this
-          );
+          if (!emailjsReady) {
+            throw new Error('EmailJS is not configured. Add your EmailJS keys in the script.');
+          }
+          await emailjs.sendForm(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, this);
           contactForm.style.display = 'none';
-          formSuccess.style.display = 'block';
+          if (formSuccess) formSuccess.style.display = 'block';
           setTimeout(() => {
             contactForm.reset();
             contactForm.style.display = 'block';
-            formSuccess.style.display = 'none';
+            if (formSuccess) formSuccess.style.display = 'none';
             submitBtn.textContent = 'Send Request';
             submitBtn.disabled = false;
-            modalOverlay.classList.remove('open');
-            document.body.style.overflow = '';
+            if (modalOverlay) { modalOverlay.classList.remove('open'); document.body.style.overflow = ''; }
           }, 3000);
         } catch (err) {
-          formError.textContent = 'Message could not be sent. Please email us directly at jengalabsafritechltd@gmail.com';
-          formError.style.display = 'block';
+          console.error(err);
+          if (formError) {
+            formError.textContent = 'Message could not be sent. Please email us directly at jengalabsafritechltd@gmail.com';
+            formError.style.display = 'block';
+          }
           submitBtn.textContent = 'Send Request';
           submitBtn.disabled = false;
         }
