@@ -271,15 +271,40 @@
   <button class="scroll-top-btn" id="scrollTopBtn" aria-label="Scroll to top">↑</button>
   <div class="mobile-bottom-bar"><button type="button" class="btn-primary" id="mobileQuoteBtn">Get a Quote</button></div>
   <nav>
-    <a href="#" class="logo">Jengalabs <span>Afritech Limited</span></a>
+    <a href="index.html" class="logo">Jengalabs <span>Afritech Limited</span></a>
     <button type="button" class="menu-toggle" id="menuToggle" aria-label="Toggle menu" aria-controls="navLinks" aria-expanded="false"><span></span><span></span><span></span></button>
     <ul class="nav-links" id="navLinks">
-      <li><a href="#services">Services</a></li>
-      <li><a href="#why">About</a></li>
-      <li><a href="#process">Process</a></li>
-      <li><a href="#contact" class="nav-cta" data-modal-open>Get a Quote</a></li>
+      <li><a href="services.html">Services</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="process.html">Process</a></li>
+      <li><a href="contact.html" class="nav-cta">Get a Quote</a></li>
     </ul>
-  </nav>
+  </nav><section class="hero">
+    <div class="hero-eyebrow"><span class="typewriter" id="heroTypewriter" aria-live="polite"><span class="typewriter-text"></span><span class="typewriter-cursor" aria-hidden="true"></span></span></div>
+    <h1 class="hero-headline">Less Hustle<br><em>More Business</em><br></h1>
+    <p class="hero-sub">Jengalabs Afritech delivers end-to-end technology solutions — from IT equipment supply to enterprise systems deployment — built for African businesses.</p>
+    <div class="hero-actions">
+      <a href="services.html" class="btn-primary">Explore Services <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="sound-wave"><span></span><span></span><span></span></span></a>
+      <a href="contact.html" class="btn-outline">Book a Consultation</a>
+      <button type="button" class="btn-outline magnetic" data-quiz-open style="border-color: var(--accent); color: var(--accent);">Find My Solution</button>
+    </div>
+    <div class="hero-quick-links" aria-label="Quick links">
+      <a href="about.html" class="hero-quick-link">Why Jengalabs</a>
+      <a href="services.html" class="hero-quick-link">Our Services</a>
+      <a href="contact.html" class="hero-quick-link">Request a Quote</a>
+    </div>
+  </section>
+  <footer>
+    <div class="footer-top">
+      <div class="footer-brand"><a href="index.html" class="logo">Jengalabs <span>Afritech Limited</span></a><p>Jengalabs Afritech Limited — your end-to-end technology partner for IT infrastructure in East Africa.</p></div>
+      <div><div class="footer-col-title">Services</div><ul class="footer-links"><li><a href="services.html">IT Equipment Supply</a></li><li><a href="services.html">eTIMS Integration</a></li><li><a href="services.html">WiFi &amp; CCTV</a></li><li><a href="services.html">Web &amp; App Dev</a></li><li><a href="services.html">ERP / POS</a></li><li><a href="services.html">Staff Training</a></li></ul></div>
+      <div><div class="footer-col-title">Company</div><ul class="footer-links"><li><a href="about.html">About Us</a></li><li><a href="process.html">Our Process</a></li><li><a href="about.html">Client Stories</a></li><li><a href="mailto:info@jengalabsafritechltd.com">Careers</a></li><li><a href="mailto:info@jengalabsafritechltd.com">Contact Us</a></li></ul></div>
+      <div><div class="footer-col-title">Contact</div><div class="footer-contact-item"><span class="footer-contact-icon">📍</span>Nairobi, Kenya</div><div class="footer-contact-item"><span class="footer-contact-icon">📧</span>info@jengalabsafritechltd.com</div><div class="footer-contact-item"><span class="footer-contact-icon">📞</span>+254&nbsp;114&nbsp;976&nbsp;187</div></div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 Jengalabs Afritech Limited. All rights reserved.</p>
+    </div>
+  </footer>
   <div class="modal-overlay" id="modalOverlay">
     <div class="modal">
       <div class="modal-header"><h3 class="modal-title">Start Your Project</h3><button type="button" class="modal-close" id="modalClose">&times;</button></div>
@@ -314,180 +339,46 @@
       <div class="modal-header"><h3 class="modal-title">Find Your Solution</h3><button type="button" class="modal-close" id="quizClose">&times;</button></div>
       <div class="quiz-progress"><div class="quiz-progress-dot active"></div><div class="quiz-progress-dot"></div><div class="quiz-progress-dot"></div></div>
       <div class="quiz-step active" data-step="1">
-        <div class="quiz-question">What type of business are you?</div>
+        <p class="quiz-question">What is your main priority today?</p>
         <div class="quiz-options">
-          <button type="button" class="quiz-option" data-value="retail">Retail / Shop</button>
-          <button type="button" class="quiz-option" data-value="corporate">Corporate / Enterprise</button>
-          <button type="button" class="quiz-option" data-value="hospitality">Hotel / Restaurant</button>
-          <button type="button" class="quiz-option" data-value="startup">Startup / Small Business</button>
+          <button type="button" class="quiz-option" data-value="compliance">eTIMS / regulatory compliance</button>
+          <button type="button" class="quiz-option" data-value="infrastructure">IT infrastructure & networking</button>
+          <button type="button" class="quiz-option" data-value="digital">Web or mobile presence</button>
+          <button type="button" class="quiz-option" data-value="efficiency">ERP / POS efficiency</button>
         </div>
       </div>
       <div class="quiz-step" data-step="2">
-        <div class="quiz-question">What's your biggest challenge?</div>
+        <p class="quiz-question">What would help your business most?</p>
         <div class="quiz-options">
-          <button type="button" class="quiz-option" data-value="compliance">KRA / Tax Compliance</button>
-          <button type="button" class="quiz-option" data-value="infrastructure">Slow Computers / Network Issues</button>
-          <button type="button" class="quiz-option" data-value="digital">Need a Website or App</button>
-          <button type="button" class="quiz-option" data-value="efficiency">Manual Processes / Want Automation</button>
+          <button type="button" class="quiz-option" data-value="compliance">Faster customs processing</button>
+          <button type="button" class="quiz-option" data-value="infrastructure">Reliable office networks</button>
+          <button type="button" class="quiz-option" data-value="digital">A stronger digital presence</button>
+          <button type="button" class="quiz-option" data-value="efficiency">Better operations systems</button>
         </div>
       </div>
       <div class="quiz-step" data-step="3">
-        <div class="quiz-question">What's your timeline?</div>
+        <p class="quiz-question">What size is the project?</p>
         <div class="quiz-options">
-          <button type="button" class="quiz-option" data-value="urgent">ASAP (Urgent)</button>
-          <button type="button" class="quiz-option" data-value="month">Within a month</button>
-          <button type="button" class="quiz-option" data-value="quarter">This quarter</button>
-          <button type="button" class="quiz-option" data-value="exploring">Just exploring</button>
+          <button type="button" class="quiz-option" data-value="compliance">Compliance-first setup</button>
+          <button type="button" class="quiz-option" data-value="infrastructure">Mid-sized deployment</button>
+          <button type="button" class="quiz-option" data-value="digital">Digital product launch</button>
+          <button type="button" class="quiz-option" data-value="efficiency">Full systems overhaul</button>
         </div>
       </div>
       <div class="quiz-step" data-step="result">
-        <div class="quiz-result"><div class="success-check"></div><h3>We Found Your Match!</h3><p id="quizResultText">Based on your needs, we recommend starting with a free consultation.</p></div>
+        <div class="quiz-result">
+          <div class="success-check"></div>
+          <h4>Recommended next step</h4>
+          <p id="quizResultText">We’ll recommend the best service for your needs.</p>
+          <a href="contact.html" class="btn-primary">Contact our team</a>
+        </div>
       </div>
-      <div class="quiz-nav"><button type="button" class="quiz-back" id="quizBack" style="visibility: hidden;">Back</button><button type="button" class="btn-primary" id="quizNext" style="display: none;">See Result</button></div>
+      <div class="quiz-nav">
+        <button type="button" class="quiz-back" id="quizBack">Back</button>
+        <button type="button" class="btn-primary" id="quizNext" disabled>Show recommendation</button>
+      </div>
     </div>
   </div>
-  <section class="hero">
-    <div class="hero-eyebrow"><span class="typewriter" id="heroTypewriter" aria-live="polite"><span class="typewriter-text"></span><span class="typewriter-cursor" aria-hidden="true"></span></span></div>
-    <h1 class="hero-headline">Less Hustle<br><em>More Business</em><br></h1>
-    <p class="hero-sub">Jengalabs Afritech delivers end-to-end technology solutions — from IT equipment supply to enterprise systems deployment — built for African businesses.</p>
-    <div class="hero-actions">
-      <a href="#services" class="btn-primary">Explore Services <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="sound-wave"><span></span><span></span><span></span></span></a>
-      <a href="#contact" class="btn-outline">Book a Consultation</a>
-      <button type="button" class="btn-outline magnetic" data-quiz-open style="border-color: var(--accent); color: var(--accent);">Find My Solution</button>
-    </div>
-    <div class="hero-quick-links" aria-label="Quick links">
-      <a href="#why" class="hero-quick-link">Why Jengalabs</a>
-      <a href="#services" class="hero-quick-link">Our Services</a>
-      <a href="#contact" class="hero-quick-link">Request a Quote</a>
-    </div>
-  </section>
-  <div class="stats-bar">
-    <div class="stat-item"><div class="stat-num tooltip" data-tooltip="500+ projects delivered">500+</div><div class="stat-label">Deployments Completed</div></div>
-    <div class="stat-item"><div class="stat-num tooltip" data-tooltip="200+ satisfied clients">200+</div><div class="stat-label">Business Clients</div></div>
-    <div class="stat-item"><div class="stat-num tooltip" data-tooltip="IT, eTIMS, WiFi, Dev, Systems, Training">7</div><div class="stat-label">Core Service Areas</div></div>
-    <div class="stat-item"><div class="stat-num tooltip" data-tooltip="Round-the-clock support">24/7</div><div class="stat-label">Contracted Maintenance</div></div>
-  </div>
-  <section class="services parallax-section" id="services">
-    <div class="parallax-bg" data-parallax="0.3"></div>
-    <div class="services-header reveal">
-      <div><div class="section-tag">What We Do</div><h2 class="section-title">Complete Tech<br>Solutions for <em>Africa</em></h2></div>
-      <p class="services-desc">From hardware procurement to full software integration, we deliver technology that works — certified, maintained, and built for the realities of doing business in Africa.</p>
-    </div>
-    <div class="services-grid reveal">
-      <div class="service-card" data-expandable><div class="service-number">01</div><div class="service-icon">🖥️</div><div class="service-name">IT Equipment Supply &amp; Distribution</div><p class="service-desc">Sourcing, procurement, and distribution of servers, networking gear, computers, peripherals.</p><div class="service-extra"><p>Enterprise servers, workstations, laptops, networking equipment (Cisco, Ubiquiti, MikroTik), POS terminals.</p></div><div class="service-arrow">Learn More →</div></div>
-      <div class="service-card" data-expandable><div class="service-number">02</div><div class="service-icon">🔗</div><div class="service-name">eTIMS Integration &amp; Consultancy</div><p class="service-desc">Seamless Kenya Revenue Authority eTIMS compliance.</p><div class="service-extra"><p>Full eTIMS compliance solution: TIN registration, tax classifier setup, ERP integration, 24/7 support.</p></div><div class="service-arrow">Learn More →</div></div>
-      <div class="service-card" data-expandable><div class="service-number">03</div><div class="service-icon">📡</div><div class="service-name">WiFi &amp; CCTV Deployment</div><p class="service-desc">Enterprise-grade wireless networks and surveillance systems.</p><div class="service-extra"><p>Mesh WiFi networks, hotspot solutions, IP CCTV camera systems (Hikvision, Dahua), NVR setup.</p></div><div class="service-arrow">Learn More →</div></div>
-      <div class="service-card" data-expandable><div class="service-number">04</div><div class="service-icon">💻</div><div class="service-name">Web &amp; App Development</div><p class="service-desc">Custom websites, web applications, and mobile apps.</p><div class="service-extra"><p>Responsive websites, e-commerce platforms, web apps, mobile iOS/Android apps, UI/UX design.</p></div><div class="service-arrow">Learn More →</div></div>
-      <div class="service-card" data-expandable><div class="service-number">05</div><div class="service-icon">⚙️</div><div class="service-name">Systems Deployment</div><p class="service-desc">Full implementation of POS, ERP, and accounting systems.</p><div class="service-extra"><p>Sage, QuickBooks, Odoo, SAP Business One, custom POS solutions.</p></div><div class="service-arrow">Learn More →</div></div>
-      <div class="service-card" data-expandable><div class="service-number">06</div><div class="service-icon">🛡️</div><div class="service-name">Staff Training &amp; Maintenance</div><p class="service-desc">Structured technology training and maintenance contracts.</p><div class="service-extra"><p>On-site and remote training, IT certification programs, SLA-backed maintenance contracts.</p></div><div class="service-arrow">Learn More →</div></div>
-    </div>
-  </section>
-  <section class="why" id="why">
-    <div class="why-inner">
-      <div class="why-visual reveal">
-        <div class="why-card-main">
-          <div class="feature-badge"><span class="feature-badge-dot"></span>Active Deployments</div>
-          <div class="why-metric-num">500+</div>
-          <div class="why-metric-sub">Projects delivered across East Africa</div>
-          <div class="why-badges">
-            <div class="why-badge green">eTIMS ✓</div>
-            <div class="why-badge teal">ERP ✓</div>
-            <div class="why-badge green">POS ✓</div>
-            <div class="why-badge teal">WiFi ✓</div>
-          </div>
-        </div>
-        <div class="circuit-lines">
-          <div class="system-label">// SYSTEM STATUS</div>
-          <div class="metric-rows">
-            <div class="metric-row"><span class="metric-name">Network Uptime</span><span class="metric-val green">99.9%</span></div>
-            <div class="prog-track"><div class="prog-fill teal" style="width:99.9%"></div></div>
-            <div class="metric-row"><span class="metric-name">Client Satisfaction</span><span class="metric-val accent">97%</span></div>
-            <div class="prog-track"><div class="prog-fill accent" style="width:97%"></div></div>
-          </div>
-        </div>
-      </div>
-      <div class="reveal">
-        <div class="section-tag">Why Jengalabs</div>
-        <h2 class="section-title">Built for the<br>African <em>Market</em></h2>
-        <ul class="why-list">
-          <li><div class="why-check">✓</div><p class="why-list-text"><strong>End-to-end ownership.</strong> Your project stays with our team from scoping to go-live.</p></li>
-          <li><div class="why-check">✓</div><p class="why-list-text"><strong>Kenya-specific compliance.</strong> Deep expertise in KRA eTIMS and local regulations.</p></li>
-          <li><div class="why-check">✓</div><p class="why-list-text"><strong>Vendor-agnostic recommendations.</strong> Best solutions for your budget.</p></li>
-          <li><div class="why-check">✓</div><p class="why-list-text"><strong>Post-deployment support.</strong> Contracted maintenance and 24/7 monitoring.</p></li>
-          <li><div class="why-check">✓</div><p class="why-list-text"><strong>Staff enablement.</strong> We train your team for independence.</p></li>
-        </ul>
-      </div>
-    </div>
-  </section>
-  <section class="process" id="process">
-    <div class="process-header reveal"><div class="section-tag" style="justify-content:center;">How It Works</div><h2 class="section-title">From Brief to <em>Live</em></h2></div>
-    <div class="process-steps reveal">
-      <div class="process-step"><div class="step-num">01</div><div class="step-title">Consult &amp; Assess</div><p class="step-desc">We meet your team and audit your infrastructure.</p></div>
-      <div class="process-step"><div class="step-num">02</div><div class="step-title">Propose &amp; Plan</div><p class="step-desc">Detailed proposal with phased milestones and pricing.</p></div>
-      <div class="process-step"><div class="step-num">03</div><div class="step-title">Deploy &amp; Integrate</div><p class="step-desc">Certified engineers implement and test the solution.</p></div>
-      <div class="process-step"><div class="step-num">04</div><div class="step-title">Train &amp; Maintain</div><p class="step-desc">Staff training and ongoing maintenance packages.</p></div>
-    </div>
-  </section>
-  <!-- Testimonials Section (Fix #3) -->
-  <section class="testimonials" id="testimonials">
-    <div class="testimonials-header reveal">
-      <div class="section-tag" style="justify-content:center;">Client Stories</div>
-      <h2 class="section-title">Trusted by <em>200+ Businesses</em></h2>
-    </div>
-    <div class="testimonials-grid">
-      <div class="testimonial-card reveal">
-        <div class="testimonial-stars">★★★★★</div>
-        <p class="testimonial-quote">"Jengalabs handled our eTIMS integration end-to-end. We were KRA-compliant in under a week — no stress, no downtime. Their team knew exactly what they were doing."</p>
-        <div class="testimonial-service-tag">eTIMS Integration</div>
-        <div class="testimonial-author">
-          <div class="testimonial-avatar">JM</div>
-          <div><div class="testimonial-name">James Mwangi</div><div class="testimonial-role">CFO, Retail Chain — Nairobi</div></div>
-        </div>
-      </div>
-      <div class="testimonial-card reveal">
-        <div class="testimonial-stars">★★★★★</div>
-        <p class="testimonial-quote">"We upgraded our entire office network and CCTV in two days. The WiFi is rock-solid now, coverage we never had before. Professional team, clean installation."</p>
-        <div class="testimonial-service-tag">WiFi &amp; CCTV Deployment</div>
-        <div class="testimonial-author">
-          <div class="testimonial-avatar">AW</div>
-          <div><div class="testimonial-name">Amina Waweru</div><div class="testimonial-role">Operations Manager — Westlands</div></div>
-        </div>
-      </div>
-      <div class="testimonial-card reveal">
-        <div class="testimonial-stars">★★★★★</div>
-        <p class="testimonial-quote">"They deployed our Odoo ERP across 3 branches and trained all our staff. Six months in and we've cut manual reconciliation time by 70%. Incredible value."</p>
-        <div class="testimonial-service-tag">Systems Deployment</div>
-        <div class="testimonial-author">
-          <div class="testimonial-avatar">PK</div>
-          <div><div class="testimonial-name">Peter Kamau</div><div class="testimonial-role">MD, Distribution Company — Mombasa</div></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="cta-section parallax-section" id="contact">
-    <div class="parallax-bg" data-parallax="0.2"></div>
-    <div class="cta-inner reveal">
-      <div class="section-tag" style="justify-content:center;">Ready to Start?</div>
-      <h2 class="section-title">Let's Build Your<br><em>Digital Future</em></h2>
-      <p>Whether you need eTIMS compliance, a new ERP, or a complete network overhaul.</p>
-      <div class="cta-actions">
-        <a href="mailto:info@jengalabsafritechltd.com" class="btn-primary">Get Free Consultation <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
-        <a href="tel:+254114976187" class="btn-outline">📞 Call Us</a>
-      </div>
-    </div>
-  </section>
-  <footer>
-    <div class="footer-top">
-      <div class="footer-brand"><a href="#" class="logo">Jengalabs <span>Afritech Limited</span></a><p>Jengalabs Afritech Limited — your end-to-end technology partner for IT infrastructure in East Africa.</p></div>
-      <div><div class="footer-col-title">Services</div><ul class="footer-links"><li><a href="#services">IT Equipment Supply</a></li><li><a href="#services">eTIMS Integration</a></li><li><a href="#services">WiFi &amp; CCTV</a></li><li><a href="#services">Web &amp; App Dev</a></li><li><a href="#services">ERP / POS</a></li><li><a href="#services">Staff Training</a></li></ul></div>
-      <div><div class="footer-col-title">Company</div><ul class="footer-links"><li><a href="#why">About Us</a></li><li><a href="#process">Our Process</a></li><li><a href="#testimonials">Client Stories</a></li><li><a href="mailto:info@jengalabsafritechltd.com">Careers</a></li><li><a href="mailto:info@jengalabsafritechltd.com">Contact Us</a></li></ul></div>
-      <div><div class="footer-col-title">Contact</div><div class="footer-contact-item"><span class="footer-contact-icon">📍</span>Nairobi, Kenya</div><div class="footer-contact-item"><span class="footer-contact-icon">📧</span>info@jengalabsafritechltd.com</div><div class="footer-contact-item"><span class="footer-contact-icon">📞</span>+254&nbsp;114&nbsp;976&nbsp;187</div></div>
-    </div>
-    <div class="footer-bottom">
-      <p>© 2025 Jengalabs Afritech Limited. All rights reserved.</p>
-    </div>
-  </footer>
   <script>
     // ── Helpers ──────────────────────────────────────────────────────────────
     const $ = (sel, root = document) => root.querySelector(sel);
@@ -917,6 +808,5 @@
         }
       });
     }
-  </script>
-</body>
+  </script></body>
 </html>
