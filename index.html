@@ -21,7 +21,7 @@
     .cursor.hovered { transform: translate(-50%, -50%) scale(1.6); }
     .cursor-ring.hovered { transform: translate(-50%, -50%) scale(1.2); border-color: rgba(33,137,116,0.8); }
     #bg-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; opacity: 0.18; }
-    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 1.4rem 4vw; display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.92); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(31,41,55,0.08); }
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 1100; padding: 1.4rem 4vw; display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.92); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(31,41,55,0.08); }
     .logo { font-family: 'Dancing Script', cursive; font-weight: 500; font-size: 1.65rem; letter-spacing: 0; color: var(--text); text-decoration: none; display: inline-flex; align-items: center; gap: 0.4rem; }
     .logo-icon { width: 40px; height: 32px; background: linear-gradient(135deg, var(--accent), var(--accent2)); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 800; letter-spacing: -0.02em; color: #fff; }
     .logo span { font-family: 'Syne', sans-serif; font-weight: 700; color: var(--accent); letter-spacing: -0.03em; font-size: 0.92rem; }
@@ -145,13 +145,13 @@
     .whatsapp-fab { position: fixed; bottom: 1.5rem; right: 1.5rem; width: 52px; height: 52px; border-radius: 50%; background: #25D366; display: flex; align-items: center; justify-content: center; z-index: 500; box-shadow: 0 4px 20px rgba(37,211,102,0.35); transition: transform 0.2s, box-shadow 0.2s; cursor: pointer !important; text-decoration: none; }
     .whatsapp-fab:hover { transform: scale(1.08); box-shadow: 0 8px 28px rgba(37,211,102,0.45); }
     .whatsapp-fab svg { width: 28px; height: 28px; }
-    .menu-toggle { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: none; padding: 12px; z-index: 101; }
+    .menu-toggle { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: none; padding: 12px; z-index: 1200; }
     .menu-toggle span { width: 24px; height: 2px; background: var(--text); transition: all 0.3s; }
     .menu-toggle:focus-visible { outline: 3px solid rgba(47,133,90,0.3); outline-offset: 3px; }
     .menu-toggle.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
     .menu-toggle.active span:nth-child(2) { opacity: 0; }
     .menu-toggle.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
-    @media (max-width: 768px) { .menu-toggle { display: flex; } .nav-links { display: flex; position: fixed; top: 0; right: -100%; width: 75%; max-width: 320px; height: 100vh; background: var(--surface); flex-direction: column; padding: 100px 2rem 2rem; gap: 1.5rem; transition: right 0.35s cubic-bezier(0.4, 0, 0.2, 1); border-left: 1px solid var(--border); } .nav-links.open { right: 0; } .nav-links a { font-size: 1.1rem; color: var(--text); } .nav-links a:hover, .nav-links a:focus-visible { color: var(--accent); } .nav-cta { margin-top: auto; } .mobile-bottom-bar { display: block; } }
+    @media (max-width: 768px) { .menu-toggle { display: flex; } .nav-links { display: flex; position: fixed; top: 0; right: -100%; width: 75%; max-width: 320px; height: 100vh; background: var(--surface); flex-direction: column; padding: 100px 2rem 2rem; gap: 1.5rem; transition: right 0.35s cubic-bezier(0.4, 0, 0.2, 1); border-left: 1px solid var(--border); z-index: 1150; } .nav-links.open { right: 0; } .nav-links a { font-size: 1.1rem; color: var(--text); } .nav-links a:hover, .nav-links a:focus-visible { color: var(--accent); } .nav-cta { margin-top: auto; } .mobile-bottom-bar { display: block; } }
     .modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(8px); z-index: 200; opacity: 0; visibility: hidden; transition: all 0.3s; display: flex; align-items: center; justify-content: center; padding: 1rem; }
     .modal-overlay.open { opacity: 1; visibility: visible; }
     .modal { background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; width: 100%; max-width: 500px; padding: 2.5rem; transform: scale(0.9) translateY(20px); transition: transform 0.3s; }
@@ -485,7 +485,7 @@
     }
     $$('[data-modal-open]').forEach(btn => {
       btn.addEventListener('click', e => {
-        if (btn.getAttribute('href') === '#contact' || btn.classList.contains('nav-cta')) {
+        if (btn.getAttribute('href') === '#contact') {
           e.preventDefault();
           openModal();
         }
