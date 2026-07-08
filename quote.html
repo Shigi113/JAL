@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Get a Quotation — Jengalabs Afritech Limited</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;500;600&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; font-family: 'DM Sans', sans-serif; background: #f7f9f7; color: #102a24; overflow-x: hidden; }
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; }
+    img { max-width: 100%; display: block; }
+    :root { --surface: #ffffff; --accent: #2f855a; --accent2: #f08f3f; --muted: #56615c; --text: #102a24; --border: rgba(16,42,36,0.12); --shadow: rgba(16,42,36,0.08); }
+    .topnav { position: fixed; inset: 0 0 auto 0; z-index: 1000; display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0.85rem clamp(1.2rem, 2vw, 2rem); background: rgba(255,255,255,0.96); border-bottom: 1px solid rgba(16,42,36,0.08); backdrop-filter: blur(16px); }
+    .brand { display:flex; align-items:center; gap:0.6rem; font-weight:700; letter-spacing:0.02em; font-size:1rem; text-decoration:none; }
+    .brand-logo { height: 40px; width: auto; display: flex; align-items: center; flex-shrink: 0; }
+    .brand-logo img { height: 100%; width: auto; transition: transform 0.22s ease; }
+    .brand:hover .brand-logo img { transform: scale(1.05); }
+    .brand-text { display: flex; flex-direction: column; line-height: 1.05; }
+    .brand-first { font-family: 'Dancing Script', cursive; color: var(--accent); font-size:1.45rem; line-height:1; transition: transform 0.22s ease; }
+    .brand-second { font-family: 'Syne', sans-serif; color: var(--accent2); font-weight:800; text-transform:uppercase; letter-spacing:0.12em; font-size:0.92rem; display:inline-block; transform-origin:left center; }
+    .brand:hover .brand-first { transform: translateY(-3px); }
+    @media (max-width:820px) { .brand { gap:0.45rem; } .brand-first { font-size:1.15rem; } .brand-second { font-size:0.82rem; } }
+    .nav-toggle { display: none; flex-direction: column; justify-content: center; gap: 6px; width: 44px; height: 40px; background: none; border: none; cursor: pointer; padding: 0; }
+    .nav-toggle span { height: 3px; border-radius: 999px; background: #102a24; transition: transform 0.3s, opacity 0.3s; }
+    .nav-toggle.active span:nth-child(1) { transform: translateY(9px) rotate(45deg); }
+    .nav-toggle.active span:nth-child(2) { opacity: 0; }
+    .nav-toggle.active span:nth-child(3) { transform: translateY(-9px) rotate(-45deg); }
+    .nav-menu { display: flex; align-items: center; gap: 1.25rem; list-style: none; margin: 0; padding: 0; }
+    .nav-menu a { font-size: 0.85rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); transition: color 0.25s, transform 0.25s; }
+    .nav-menu a:hover, .nav-menu a:focus-visible, .nav-menu a.active { color: var(--accent); transform: translateY(-1px); }
+    .nav-menu .cta { padding: 0.8rem 1.2rem; background: var(--accent); color: #fff; border-radius: 999px; }
+    .nav-overlay { position: fixed; inset: 0; background: rgba(16,42,36,0.4); z-index: 1190; opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 0.3s ease; }
+    .nav-overlay.open { opacity: 1; visibility: visible; pointer-events: auto; }
+    .section { padding: clamp(4rem, 6vw, 8rem) 1.5rem; }
+    .section-header { max-width: 720px; margin: 0 auto 2rem; }
+    .section-label { display: inline-flex; align-items: center; gap: 0.75rem; text-transform: uppercase; letter-spacing: 0.2em; font-size: 0.75rem; color: var(--accent); font-weight: 700; }
+    .section-title { margin: 0.75rem 0 1rem; font-family: 'Syne', sans-serif; font-size: clamp(2.2rem, 4vw, 3.4rem); line-height: 1.05; }
+    .section-copy { color: var(--muted); line-height: 1.8; font-size: 1rem; }
+    .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .reveal.in-view { opacity: 1; transform: translateY(0); }
+    .lock-scroll { overflow: hidden; }
+    .card-icon { width: 2.5rem; height: 2.5rem; color: var(--accent); margin-bottom: 0.75rem; opacity: 0.9; }
+
+    /* Quote builder layout */
+    .quote-wrap { width: min(1180px, 100%); margin: 0 auto; display: grid; grid-template-columns: 1.6fr 1fr; gap: 2rem; align-items: flex-start; }
+    .catalog-group { margin-bottom: 2rem; }
+    .catalog-group-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.1rem; color: var(--text); margin: 0 0 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--border); }
+    .catalog-item { display: grid; grid-template-columns: auto 1fr auto auto; align-items: center; gap: 1rem; background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 1.1rem 1.25rem; margin-bottom: 0.75rem; transition: border-color 0.2s ease, box-shadow 0.2s ease; }
+    .catalog-item.selected { border-color: var(--accent); box-shadow: 0 12px 28px rgba(47,133,90,0.1); }
+    .catalog-check { width: 22px; height: 22px; accent-color: var(--accent); cursor: pointer; flex-shrink: 0; }
+    .catalog-info strong { display: block; font-size: 0.98rem; color: var(--text); }
+    .catalog-info span { display: block; font-size: 0.85rem; color: var(--muted); margin-top: 0.2rem; }
+    .catalog-price { font-family: 'Syne', sans-serif; font-weight: 700; color: var(--accent); font-size: 0.95rem; white-space: nowrap; }
+    .catalog-qty { display: flex; align-items: center; gap: 0.4rem; opacity: 0.35; pointer-events: none; transition: opacity 0.2s ease; }
+    .catalog-item.selected .catalog-qty { opacity: 1; pointer-events: auto; }
+    .qty-btn { width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--border); background: #fff; cursor: pointer; font-size: 1rem; line-height: 1; color: var(--accent); }
+    .qty-btn:hover { background: rgba(47,133,90,0.08); }
+    .qty-val { width: 28px; text-align: center; font-weight: 700; font-size: 0.92rem; }
+
+    .summary-card { position: sticky; top: 110px; background: var(--surface); border: 1px solid var(--border); border-radius: 24px; padding: 1.75rem; box-shadow: 0 24px 48px rgba(16,42,36,0.08); }
+    .summary-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.15rem; margin: 0 0 1rem; }
+    .summary-empty { color: var(--muted); font-size: 0.9rem; }
+    .summary-line { display: flex; justify-content: space-between; gap: 0.75rem; font-size: 0.88rem; padding: 0.55rem 0; border-bottom: 1px dashed var(--border); }
+    .summary-line-name { color: var(--text); }
+    .summary-line-meta { color: var(--muted); }
+    .summary-total { display: flex; justify-content: space-between; align-items: baseline; margin-top: 1rem; padding-top: 1rem; border-top: 2px solid var(--border); font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.2rem; color: var(--accent); }
+    .summary-note { font-size: 0.78rem; color: var(--muted); margin-top: 0.5rem; line-height: 1.5; }
+
+    .cust-form { display: grid; gap: 0.85rem; margin-top: 1.5rem; }
+    .cust-form label { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); display: block; margin-bottom: 0.35rem; }
+    .cust-form input, .cust-form textarea { width: 100%; padding: 0.7rem 0.85rem; border-radius: 12px; border: 1px solid var(--border); font: inherit; font-size: 0.92rem; background: #fbfcfb; color: var(--text); }
+    .cust-form input:focus, .cust-form textarea:focus { outline: none; border-color: var(--accent); background: #fff; }
+    .cust-form textarea { resize: vertical; min-height: 70px; }
+
+    .quote-actions { display: grid; gap: 0.65rem; margin-top: 1.5rem; }
+    .button { display: inline-flex; align-items: center; justify-content: center; gap: 0.6rem; border-radius: 999px; border: none; cursor: pointer; transition: transform 0.25s, box-shadow 0.25s, opacity 0.2s; padding: 1rem 1.4rem; width: 100%; font-weight: 700; font-size: 0.92rem; }
+    .button-primary { background: var(--accent); color: #fff; box-shadow: 0 16px 36px rgba(47,133,90,0.18); }
+    .button-primary:disabled { opacity: 0.45; cursor: not-allowed; box-shadow: none; }
+    .button-primary:not(:disabled):hover { transform: translateY(-2px); }
+    .button-secondary { background: #fff; border: 1px solid rgba(16,42,36,0.12); color: #102a24; }
+    .form-hint { font-size: 0.78rem; color: var(--muted); text-align: center; margin: 0; }
+    .toast { position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--text); color: #fff; padding: 0.85rem 1.4rem; border-radius: 999px; font-size: 0.88rem; opacity: 0; pointer-events: none; transition: opacity 0.3s ease, transform 0.3s ease; z-index: 2000; }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    .footer { padding: 3rem 1.5rem 2.5rem; background: #fff; border-top: 1px solid rgba(16,42,36,0.08); color: var(--muted); font-size: 0.95rem; }
+    .footer-inner { max-width: 1120px; margin: 0 auto; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.5rem; align-items: flex-start; }
+    .footer-block { display: grid; gap: 1rem; }
+    .footer-title { margin: 0; color: var(--text); font-size: 0.82rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.18em; }
+    .footer-links { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.65rem; }
+    .footer-links a { color: var(--muted); transition: color 0.2s ease, transform 0.2s ease; }
+    .footer-links a:hover, .footer-links a.active { color: var(--accent); transform: translateX(1px); }
+    .social-links { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+    .social-link { display: inline-flex; align-items: center; justify-content: center; padding: 0.75rem 1rem; border-radius: 999px; background: rgba(47,133,90,0.08); color: var(--text); font-weight: 700; font-size: 0.88rem; text-decoration: none; transition: transform 0.2s ease, background 0.2s ease; }
+    .social-link:hover { transform: translateY(-1px); background: rgba(47,133,90,0.14); }
+    .footer-note { margin: 0; color: var(--muted); font-size: 0.88rem; }
+    .whatsapp-float { position: fixed; right: 1rem; bottom: 1rem; z-index: 1300; display: inline-flex; align-items: center; justify-content: center; gap: 0.55rem; padding: 0.95rem 1.15rem; border-radius: 999px; background: #25D366; color: #fff; font-weight: 700; font-size: 0.95rem; text-decoration: none; box-shadow: 0 18px 40px rgba(37,211,102,0.22); border: 1px solid rgba(255,255,255,0.32); transition: transform 0.18s ease, box-shadow 0.18s ease; }
+    .whatsapp-float:hover { transform: translateY(-2px); box-shadow: 0 22px 48px rgba(37,211,102,0.24); }
+    .whatsapp-float::before { content: '📱'; }
+
+    @media (max-width: 980px) { .quote-wrap { grid-template-columns: 1fr; } .summary-card { position: static; } }
+    @media (max-width: 820px) {
+      .nav-toggle { display: flex; }
+      .nav-menu { position: fixed; top: 0; right: 0; height: 100vh; width: min(320px, 84vw); transform: translateX(100%); transition: transform 0.35s cubic-bezier(0.4,0,0.2,1); flex-direction: column; align-items: flex-start; justify-content: flex-start; gap: 1.1rem; padding: 6.5rem 1.75rem 2rem; background: #fff; box-shadow: -16px 0 48px rgba(16,42,36,0.16); z-index: 1200; pointer-events: none; }
+      .nav-menu.open { transform: translateX(0); pointer-events: auto; }
+      .nav-menu li { width: 100%; }
+      .nav-menu a { display: block; width: 100%; padding: 0.7rem 0.2rem; font-size: 0.95rem; }
+      .nav-menu .cta { width: 100%; text-align: center; }
+      .section { padding: 3.5rem 1.25rem; }
+      .catalog-item { grid-template-columns: auto 1fr; row-gap: 0.6rem; }
+      .catalog-price { grid-column: 2; }
+      .catalog-qty { grid-column: 2; opacity: 1; pointer-events: none; }
+      .catalog-item.selected .catalog-qty { pointer-events: auto; }
+      .footer-inner { grid-template-columns: 1fr; }
+      .social-links { justify-content: flex-start; }
+    }
+  </style>
+</head>
+<body>
+  <div class="nav-overlay" id="navOverlay"></div>
+  <nav class="topnav">
+    <a class="brand" href="index.html"><span class="brand-logo"><img src="jal-logo.png" alt="Jengalabs Afritech Limited logo"></span><span class="brand-text"><span class="brand-first">Jengalabs</span> <span class="brand-second">Afritech Limited</span></span></a>
+    <button class="nav-toggle" id="menuToggle" aria-label="Toggle menu" aria-controls="navMenu" aria-expanded="false"><span></span><span></span><span></span></button>
+    <ul class="nav-menu" id="navMenu">
+      <li><a href="index.html">Our Story</a></li>
+      <li><a href="products.html">Products</a></li>
+      <li><a href="services.html">Services</a></li>
+      <li><a href="projects.html">Projects</a></li>
+      <li><a href="team.html">Team</a></li>
+      <li><a href="arduino.html">Arduino</a></li>
+      <li><a href="quote.html" class="active">Get Quote</a></li>
+      <li><a href="contact.html" class="cta">Contacts</a></li>
+    </ul>
+  </nav>
+  <main>
+    <section class="section" id="quote">
+      <div class="section-header reveal">
+        <div class="section-label">Get a Quotation</div>
+        <h1 class="section-title">Build your own quote, right here.</h1>
+        <p class="section-copy">Tick what you need, set quantities, and download a formal quotation instantly — or send it straight to us on WhatsApp.</p>
+      </div>
+
+      <div class="quote-wrap">
+        <div class="catalog-col">
+          <div class="catalog-group reveal">
+            <h2 class="catalog-group-title">Products</h2>
+            <div id="catalogProducts"></div>
+          </div>
+          <div class="catalog-group reveal">
+            <h2 class="catalog-group-title">Arduino &amp; Robotics Components</h2>
+            <div id="catalogArduino"></div>
+          </div>
+          <div class="catalog-group reveal">
+            <h2 class="catalog-group-title">Services</h2>
+            <div id="catalogServices"></div>
+          </div>
+          <div class="catalog-group reveal">
+            <h2 class="catalog-group-title">STEM &amp; Robotics Education Programs</h2>
+            <div id="catalogEducation"></div>
+          </div>
+        </div>
+
+        <aside class="summary-card reveal">
+          <h3 class="summary-title">Your quotation</h3>
+          <div id="summaryLines"><p class="summary-empty" id="summaryEmpty">No items selected yet. Tick items on the left to build your quote.</p></div>
+          <div class="summary-total"><span>Total</span><span id="summaryTotal">KES 0</span></div>
+          <p class="summary-note">Prices shown are indicative and exclude VAT unless stated. Final pricing is confirmed by our team upon review.</p>
+
+          <form class="cust-form" id="custForm">
+            <div>
+              <label for="custName">Full name *</label>
+              <input type="text" id="custName" required placeholder="e.g. Jane Wanjiru">
+            </div>
+            <div>
+              <label for="custEmail">Email *</label>
+              <input type="email" id="custEmail" required placeholder="you@company.com">
+            </div>
+            <div>
+              <label for="custPhone">Phone *</label>
+              <input type="tel" id="custPhone" required placeholder="07XX XXX XXX">
+            </div>
+            <div>
+              <label for="custCompany">Company / Organisation</label>
+              <input type="text" id="custCompany" placeholder="Optional">
+            </div>
+            <div>
+              <label for="custNotes">Notes for our team</label>
+              <textarea id="custNotes" placeholder="Delivery location, timelines, or any special requirements..."></textarea>
+            </div>
+          </form>
+
+          <div class="quote-actions">
+            <button class="button button-primary" id="downloadBtn" disabled>Download Quotation (PDF)</button>
+            <a class="button button-secondary" id="whatsappBtn" href="#" target="_blank" rel="noopener">Send via WhatsApp instead</a>
+            <p class="form-hint">Fill in your details and select at least one item to enable download.</p>
+          </div>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-block">
+        <p class="footer-title">Site pages</p>
+        <ul class="footer-links">
+          <li><a href="index.html">Our Story</a></li>
+          <li><a href="products.html">Products</a></li>
+          <li><a href="services.html">Services</a></li>
+          <li><a href="projects.html">Projects</a></li>
+          <li><a href="team.html">Team</a></li>
+          <li><a href="arduino.html">Arduino</a></li>
+          <li><a href="quote.html" class="active">Get Quote</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-block">
+        <p class="footer-title">Follow us</p>
+        <div class="social-links">
+          <a class="social-link" href="https://www.tiktok.com/@jengalabs" target="_blank" rel="noopener">TikTok</a>
+          <a class="social-link" href="https://www.instagram.com/jengalabs/" target="_blank" rel="noopener">Instagram</a>
+          <a class="social-link" href="https://www.linkedin.com/company/jengalabs/" target="_blank" rel="noopener">LinkedIn</a>
+          <a class="social-link" href="https://twitter.com/jengalabs" target="_blank" rel="noopener">Twitter</a>
+          <a class="social-link" href="https://www.facebook.com/jengalabs" target="_blank" rel="noopener">Facebook</a>
+        </div>
+        <p class="footer-note">© 2026 Jengalabs Afritech Limited.</p>
+      </div>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script>
+    /* ============================================================
+       PRICE LIST — EDIT HERE
+       Replace the `price` value (in KES) for each item below with
+       your real pricing. `unit` is just a label shown next to the
+       price (e.g. "per unit", "per visit", "from"). Nothing else
+       in this file needs to change when you update prices.
+       ============================================================ */
+    const CATALOG = {
+      products: [
+        { id: 'stationery',  name: 'Office Stationary',              unit: 'per set',     price: 1500 },
+        { id: 'wifi-ess',    name: 'WiFi & Networking Essentials',    unit: 'per unit',    price: 6500 },
+        { id: 'cctv-hw',     name: 'CCTV & Security',                 unit: 'per camera',  price: 8500 },
+        { id: 'bt-printer',  name: 'Bluetooth XPrinter',               unit: 'per unit',    price: 7000 },
+        { id: 'comstore-58', name: 'Comstore 58mm Thermal Printer',    unit: 'per unit',    price: 6000 },
+        { id: 'label-printer', name: 'Thermal Label Printer',          unit: 'per unit',    price: 9500 },
+        { id: 'cash-drawer', name: 'Cash Drawer',                      unit: 'per unit',    price: 4500 },
+        { id: 'vscu-device', name: 'CRV VSCU Comstore Device',         unit: 'per unit',    price: 15000 }
+      ],
+      arduino: [
+        { id: 'ard-uno',      name: 'Arduino Uno R3 Board',              unit: 'per unit', price: 2500 },
+        { id: 'ard-bread',    name: 'Breadboard (830 Tie-Points)',       unit: 'per unit', price: 600 },
+        { id: 'ard-jumpers',  name: 'Jumper Wire Pack (M-M/M-F/F-F)',    unit: 'per pack', price: 450 },
+        { id: 'ard-resistors', name: 'Resistor Pack (Assorted)',        unit: 'per pack', price: 350 },
+        { id: 'ard-leds',     name: 'LED Pack (Assorted Colours)',       unit: 'per pack', price: 300 },
+        { id: 'ard-servo',    name: 'SG90 Micro Servo Motor',            unit: 'per unit', price: 800 },
+        { id: 'ard-motor',    name: 'DC Motor & Wheel Kit',              unit: 'per kit',  price: 1200 },
+        { id: 'ard-ultra',    name: 'Ultrasonic Distance Sensor',        unit: 'per unit', price: 500 },
+        { id: 'ard-lcd',      name: '16x2 LCD Display (I2C)',            unit: 'per unit', price: 1100 },
+        { id: 'ard-chassis',  name: 'Robotics Starter Chassis Kit',      unit: 'per kit',  price: 3500 }
+      ],
+      services: [
+        { id: 'cctv-install', name: 'CCTV Installation & Maintenance', unit: 'per visit',   price: 5000 },
+        { id: 'wifi-setup',   name: 'WiFi Network Setup & Configuration', unit: 'per visit', price: 4500 },
+        { id: 'pc-repair',    name: 'Computer Repair and Maintenance', unit: 'per visit',   price: 2000 },
+        { id: 'web-dev',      name: 'Web Dev & Hosting',                unit: 'from',        price: 25000 },
+        { id: 'email-hosting', name: 'Domain Email Hosting',            unit: 'per year',    price: 3500 },
+        { id: 'it-consult',   name: 'IT Consultation & Training',       unit: 'per session', price: 6000 },
+        { id: 'etims',        name: 'eTIMS Integration & Consultation', unit: 'flat fee',    price: 8000 }
+      ],
+      education: [
+        { id: 'edu-lesson', name: 'Single Lesson — Introductory Workshop', unit: 'per session', price: 5000 },
+        { id: 'edu-term',   name: 'Term Program — Term-Long Curriculum',    unit: 'per term',    price: 45000 },
+        { id: 'edu-year',   name: 'Year Program — Full Academic Year',      unit: 'per year',    price: 120000 }
+      ]
+    };
+    /* Institutional / Ministry partnerships are bespoke and handled directly
+       by our partnerships team — deliberately left out of the self-serve
+       quote builder. See services.html "Ministry & Partnership Program". */
+    /* ============================================================ */
+
+    const LOGO_BASE64 = "data:image/png;base64,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";
+    const COMPANY = {
+      name: 'Jengalabs Afritech Limited',
+      address: 'Harambee Av, Agip House, Nairobi, Kenya',
+      phone: '0114976187',
+      email: 'info@jengalabsafritechltd.com',
+      whatsapp: '254114976187'
+    };
+
+    const state = {};
+
+    function fmt(n) { return 'KES ' + n.toLocaleString('en-KE'); }
+
+    function renderCatalog() {
+      const pWrap = document.getElementById('catalogProducts');
+      const aWrap = document.getElementById('catalogArduino');
+      const sWrap = document.getElementById('catalogServices');
+      const eWrap = document.getElementById('catalogEducation');
+      function row(item) {
+        state[item.id] = { selected: false, qty: 1, item };
+        const el = document.createElement('div');
+        el.className = 'catalog-item';
+        el.id = 'row-' + item.id;
+        el.innerHTML = `
+          <input type="checkbox" class="catalog-check" data-id="${item.id}">
+          <div class="catalog-info"><strong>${item.name}</strong><span>${item.unit}</span></div>
+          <div class="catalog-price">${fmt(item.price)}</div>
+          <div class="catalog-qty">
+            <button type="button" class="qty-btn" data-id="${item.id}" data-dir="-1">−</button>
+            <span class="qty-val" id="qty-${item.id}">1</span>
+            <button type="button" class="qty-btn" data-id="${item.id}" data-dir="1">+</button>
+          </div>`;
+        return el;
+      }
+      CATALOG.products.forEach(item => pWrap.appendChild(row(item)));
+      CATALOG.arduino.forEach(item => aWrap.appendChild(row(item)));
+      CATALOG.services.forEach(item => sWrap.appendChild(row(item)));
+      CATALOG.education.forEach(item => eWrap.appendChild(row(item)));
+    }
+    renderCatalog();
+
+    document.addEventListener('change', (e) => {
+      if (e.target.classList.contains('catalog-check')) {
+        const id = e.target.dataset.id;
+        state[id].selected = e.target.checked;
+        document.getElementById('row-' + id).classList.toggle('selected', e.target.checked);
+        renderSummary();
+      }
+    });
+    document.addEventListener('click', (e) => {
+      if (e.target.classList.contains('qty-btn')) {
+        const id = e.target.dataset.id;
+        const dir = parseInt(e.target.dataset.dir, 10);
+        const s = state[id];
+        s.qty = Math.max(1, s.qty + dir);
+        document.getElementById('qty-' + id).textContent = s.qty;
+        if (s.selected) renderSummary();
+      }
+    });
+
+    function getSelectedItems() {
+      return Object.values(state).filter(s => s.selected);
+    }
+
+    function renderSummary() {
+      const selected = getSelectedItems();
+      const wrap = document.getElementById('summaryLines');
+      const totalEl = document.getElementById('summaryTotal');
+      if (!selected.length) {
+        wrap.innerHTML = '<p class="summary-empty" id="summaryEmpty">No items selected yet. Tick items on the left to build your quote.</p>';
+        totalEl.textContent = fmt(0);
+      } else {
+        let total = 0;
+        wrap.innerHTML = selected.map(s => {
+          const lineTotal = s.item.price * s.qty;
+          total += lineTotal;
+          return `<div class="summary-line"><span class="summary-line-name">${s.item.name} × ${s.qty}</span><span class="summary-line-meta">${fmt(lineTotal)}</span></div>`;
+        }).join('');
+        totalEl.textContent = fmt(total);
+      }
+      updateActionState();
+    }
+
+    function formValid() {
+      return document.getElementById('custName').value.trim() &&
+             document.getElementById('custEmail').value.trim() &&
+             document.getElementById('custPhone').value.trim() &&
+             getSelectedItems().length > 0;
+    }
+
+    function updateActionState() {
+      const valid = formValid();
+      document.getElementById('downloadBtn').disabled = !valid;
+      const wa = document.getElementById('whatsappBtn');
+      if (valid) {
+        wa.href = buildWhatsAppLink();
+        wa.style.opacity = '1';
+        wa.style.pointerEvents = 'auto';
+      } else {
+        wa.href = '#';
+        wa.style.opacity = '0.5';
+        wa.style.pointerEvents = 'none';
+      }
+    }
+
+    document.getElementById('custForm').addEventListener('input', updateActionState);
+
+    function buildWhatsAppLink() {
+      const selected = getSelectedItems();
+      const name = document.getElementById('custName').value.trim();
+      let total = 0;
+      const lines = selected.map(s => { const lt = s.item.price * s.qty; total += lt; return `- ${s.item.name} x${s.qty} (${fmt(lt)})`; });
+      const msg = `Hi Jenga Labs Afritech, I'm ${name}. I'd like a quotation for:\n${lines.join('\n')}\nEstimated total: ${fmt(total)}`;
+      return `https://wa.me/${COMPANY.whatsapp}?text=${encodeURIComponent(msg)}`;
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 3200);
+    }
+
+    document.getElementById('downloadBtn').addEventListener('click', () => {
+      if (!formValid()) return;
+      generatePDF();
+    });
+
+    function generatePDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+      const pageWidth = doc.internal.pageSize.getWidth();
+      const margin = 48;
+      const accent = [47, 133, 90];
+      const accent2 = [240, 143, 63];
+      const muted = [86, 97, 92];
+      const dark = [16, 42, 36];
+
+      let y = 56;
+
+      // Logo + company block
+      try {
+        if (LOGO_BASE64 && LOGO_BASE64.indexOf('PASTE_LOGO_BASE64_HERE') === -1) {
+          doc.addImage(LOGO_BASE64, 'PNG', margin, y - 20, 46, 42);
+        }
+      } catch (err) { /* logo optional, ignore if it fails to embed */ }
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(13);
+      doc.setTextColor(...dark);
+      doc.text(COMPANY.name, margin + 56, y);
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(9);
+      doc.setTextColor(...muted);
+      doc.text(COMPANY.address, margin + 56, y + 14);
+      doc.text(`${COMPANY.phone}  |  ${COMPANY.email}`, margin + 56, y + 27);
+
+      // Title block, right aligned
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(22);
+      doc.setTextColor(...accent);
+      doc.text('QUOTATION', pageWidth - margin, y, { align: 'right' });
+      const quoteNo = 'JAL-Q-' + Date.now().toString().slice(-8);
+      const issueDate = new Date();
+      const validUntil = new Date(issueDate.getTime() + 14 * 24 * 60 * 60 * 1000);
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(9);
+      doc.setTextColor(...muted);
+      doc.text(`Quote No: ${quoteNo}`, pageWidth - margin, y + 16, { align: 'right' });
+      doc.text(`Issued: ${issueDate.toLocaleDateString('en-KE')}`, pageWidth - margin, y + 28, { align: 'right' });
+      doc.text(`Valid until: ${validUntil.toLocaleDateString('en-KE')}`, pageWidth - margin, y + 40, { align: 'right' });
+
+      y += 66;
+      doc.setDrawColor(...accent);
+      doc.setLineWidth(1.2);
+      doc.line(margin, y, pageWidth - margin, y);
+      y += 26;
+
+      // Customer block
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(10);
+      doc.setTextColor(...dark);
+      doc.text('Prepared for', margin, y);
+      y += 14;
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(9.5);
+      doc.setTextColor(...muted);
+      const custName = document.getElementById('custName').value.trim();
+      const custEmail = document.getElementById('custEmail').value.trim();
+      const custPhone = document.getElementById('custPhone').value.trim();
+      const custCompany = document.getElementById('custCompany').value.trim();
+      const custNotes = document.getElementById('custNotes').value.trim();
+      doc.text(custName, margin, y); y += 13;
+      if (custCompany) { doc.text(custCompany, margin, y); y += 13; }
+      doc.text(custEmail, margin, y); y += 13;
+      doc.text(custPhone, margin, y); y += 20;
+
+      // Table header
+      const colX = { item: margin, qty: pageWidth - margin - 210, unit: pageWidth - margin - 140, sub: pageWidth - margin - 60 };
+      doc.setFillColor(...accent);
+      doc.rect(margin, y, pageWidth - margin * 2, 24, 'F');
+      doc.setTextColor(255, 255, 255);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(9.5);
+      doc.text('Item', colX.item + 8, y + 16);
+      doc.text('Qty', colX.qty, y + 16);
+      doc.text('Unit Price', colX.unit, y + 16);
+      doc.text('Subtotal', colX.sub, y + 16, { align: 'right' });
+      y += 24;
+
+      const selected = getSelectedItems();
+      let total = 0;
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(9.5);
+      selected.forEach((s, idx) => {
+        const lineTotal = s.item.price * s.qty;
+        total += lineTotal;
+        const rowH = 24;
+        if (idx % 2 === 0) { doc.setFillColor(247, 249, 247); doc.rect(margin, y, pageWidth - margin * 2, rowH, 'F'); }
+        doc.setTextColor(...dark);
+        doc.text(s.item.name, colX.item + 8, y + 16);
+        doc.setTextColor(...muted);
+        doc.text(String(s.qty), colX.qty, y + 16);
+        doc.text(fmt(s.item.price), colX.unit, y + 16);
+        doc.setTextColor(...dark);
+        doc.text(fmt(lineTotal), colX.sub, y + 16, { align: 'right' });
+        y += rowH;
+      });
+
+      y += 6;
+      doc.setDrawColor(...accent);
+      doc.setLineWidth(1.2);
+      doc.line(pageWidth - margin - 200, y, pageWidth - margin, y);
+      y += 20;
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(13);
+      doc.setTextColor(...accent2);
+      doc.text('TOTAL', pageWidth - margin - 200, y);
+      doc.text(fmt(total), pageWidth - margin, y, { align: 'right' });
+      y += 32;
+
+      if (custNotes) {
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(9.5);
+        doc.setTextColor(...dark);
+        doc.text('Notes', margin, y);
+        y += 13;
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(9);
+        doc.setTextColor(...muted);
+        const noteLines = doc.splitTextToSize(custNotes, pageWidth - margin * 2);
+        doc.text(noteLines, margin, y);
+        y += noteLines.length * 12 + 12;
+      }
+
+      y += 8;
+      doc.setDrawColor(230, 230, 230);
+      doc.line(margin, y, pageWidth - margin, y);
+      y += 18;
+      doc.setFont('helvetica', 'italic');
+      doc.setFontSize(8.5);
+      doc.setTextColor(...muted);
+      const terms = 'This quotation is system-generated and valid for 14 days from the issue date above. Prices are quoted in Kenya Shillings (KES) and exclude VAT unless stated. Final pricing and stock availability are subject to confirmation by Jengalabs Afritech Limited.';
+      const termLines = doc.splitTextToSize(terms, pageWidth - margin * 2);
+      doc.text(termLines, margin, y);
+
+      doc.save(`${quoteNo}-Jengalabs-Afritech.pdf`);
+      showToast('Quotation downloaded — check your device\'s Downloads folder.');
+    }
+
+    // Nav + reveal behaviour, shared with the rest of the site
+    const menuToggle = document.getElementById('menuToggle');
+    const navMenu = document.getElementById('navMenu');
+    const navOverlay = document.getElementById('navOverlay');
+    const navLinks = navMenu ? navMenu.querySelectorAll('a') : [];
+    function openMenu() { if(!navMenu || !menuToggle) return; navMenu.classList.add('open'); navOverlay.classList.add('open'); menuToggle.classList.add('active'); menuToggle.setAttribute('aria-expanded','true'); document.body.classList.add('lock-scroll'); }
+    function closeMenu() { if(!navMenu || !menuToggle) return; navMenu.classList.remove('open'); navOverlay.classList.remove('open'); menuToggle.classList.remove('active'); menuToggle.setAttribute('aria-expanded','false'); document.body.classList.remove('lock-scroll'); }
+    if(menuToggle && navMenu) { menuToggle.addEventListener('click', () => { navMenu.classList.contains('open') ? closeMenu() : openMenu(); }); navLinks.forEach(l => l.addEventListener('click', closeMenu)); navOverlay?.addEventListener('click', closeMenu); window.addEventListener('resize', () => { if(window.innerWidth > 820) closeMenu(); }); }
+    const revealItems = document.querySelectorAll('.reveal');
+    function handleReveal() { revealItems.forEach(item => { const rect = item.getBoundingClientRect(); if(rect.top < window.innerHeight - 80) item.classList.add('in-view'); }); }
+    window.addEventListener('scroll', handleReveal);
+    window.addEventListener('load', handleReveal);
+
+    renderSummary();
+    updateActionState();
+  </script>
+  <a class="whatsapp-float" href="https://wa.me/254114976187?text=Hi%20Jenga%20Labs%20Afritech" target="_blank" rel="noopener" aria-label="Chat on WhatsApp"></a>
+</body>
+</html>
