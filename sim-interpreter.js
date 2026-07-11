@@ -4,15 +4,16 @@
    var decls, if/else, for, while, blocks, assignment (=, +=, -=, *=, /=),
    ++/-- (pre/post), binary/unary/logical ops, function calls to:
      pinMode, digitalWrite, digitalRead, analogRead, analogWrite,
-     delay, delayMicroseconds, millis, Serial.begin, Serial.print,
-     Serial.println, random, map, constrain, min, max, abs
+     tone, noTone, delay, delayMicroseconds, millis, Serial.begin, Serial.print,
+     Serial.println, random, map, constrain, min, max, abs,
+     Servo objects: attach(), write(), writeMicroseconds(), read()
    Constants: HIGH, LOW, OUTPUT, INPUT, INPUT_PULLUP, A0-A5, LED_BUILTIN, true, false
    No user-defined functions beyond setup/loop (v1 scope), no arrays/structs/pointers.
    ============================================================ */
 
 // ---------- Tokenizer ----------
 const KEYWORDS = new Set([
-  'void','int','float','double','bool','boolean','char','byte','long','unsigned','const','String',
+  'void','int','float','double','bool','boolean','char','byte','long','unsigned','const','String','Servo',
   'if','else','for','while','return','true','false','break','continue'
 ]);
 
@@ -97,7 +98,7 @@ function parse(tokens) {
     if (!atOp(v)) throw new ParseError(`Expected '${v}' but got '${peek().value}' on line ${peek().line}`);
     return advance();
   }
-  const TYPE_WORDS = new Set(['void','int','float','double','bool','boolean','char','byte','long','unsigned','const','String']);
+  const TYPE_WORDS = new Set(['void','int','float','double','bool','boolean','char','byte','long','unsigned','const','String','Servo']);
 
   function isTypeStart() {
     return (peek().type === 'keyword' && TYPE_WORDS.has(peek().value));
@@ -387,8 +388,13 @@ class Interpreter {
       case 'VarDecl': {
         const isIntType = /\b(int|long|byte|unsigned)\b/.test(node.varType);
         for (const d of node.decls) {
-          let val = d.init ? yield* this.evalExpr(d.init, scope) : (node.varType === 'String' ? '' : 0);
-          if (isIntType && typeof val === 'number') val = Math.trunc(val);
+          let val;
+          if (node.varType === 'Servo') {
+            val = { __servo: true, pin: null, angle: 0 };
+          } else {
+            val = d.init ? yield* this.evalExpr(d.init, scope) : (node.varType === 'String' ? '' : 0);
+            if (isIntType && typeof val === 'number') val = Math.trunc(val);
+          }
           scope[d.name] = val;
           this._declareLocal(scope, d.name);
         }
@@ -548,6 +554,22 @@ class Interpreter {
       if (method === 'println') { this.hw.println(String(args[0] ?? '')); return null; }
       throw new Error(`Unsupported Serial.${method}()`);
     }
+    // Servo instance methods: myServo.attach(pin) / .write(angle) / .writeMicroseconds(us) / .read()
+    if (node.callee.type === 'Member' && node.callee.object.type === 'Ident') {
+      const objName = node.callee.object.name;
+      const owner = this._findOwner(scope, objName);
+      const obj = owner ? owner[objName] : this.globals[objName];
+      if (obj && obj.__servo) {
+        const method = node.callee.property;
+        const args = [];
+        for (const a of node.args) args.push(yield* this.evalExpr(a, scope));
+        if (method === 'attach') { obj.pin = args[0]; if (this.hw.servoAttach) this.hw.servoAttach(args[0]); return null; }
+        if (method === 'write') { obj.angle = Math.max(0, Math.min(180, args[0])); if (this.hw.servoWrite) this.hw.servoWrite(obj.pin, obj.angle); return null; }
+        if (method === 'writeMicroseconds') { const deg = Math.round((args[0] - 1000) / 1000 * 180); obj.angle = Math.max(0, Math.min(180, deg)); if (this.hw.servoWrite) this.hw.servoWrite(obj.pin, obj.angle); return null; }
+        if (method === 'read') return obj.angle;
+        throw new Error(`Unsupported Servo.${method}()`);
+      }
+    }
     if (node.callee.type !== 'Ident') throw new Error('Unsupported call target');
     const name = node.callee.name;
     const args = [];
@@ -559,6 +581,8 @@ class Interpreter {
       case 'digitalRead': return this.hw.digitalRead(args[0]);
       case 'analogRead': return this.hw.analogRead(args[0]);
       case 'analogWrite': this.hw.analogWrite(args[0], args[1]); return null;
+      case 'tone': if (this.hw.tone) this.hw.tone(args[0], args[1]); return null;
+      case 'noTone': if (this.hw.noTone) this.hw.noTone(args[0]); return null;
       case 'delay': yield { type: 'delay', ms: args[0] }; return null;
       case 'delayMicroseconds': yield { type: 'delay', ms: args[0] / 1000 }; return null;
       case 'millis': return this.hw.millis();
