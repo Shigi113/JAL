@@ -150,6 +150,9 @@
                 <option value="button">Button controls LED</option>
                 <option value="fade">Fade LED (PWM)</option>
                 <option value="pot">Read potentiometer</option>
+                <option value="trafficLight">Traffic light (state machine)</option>
+                <option value="reactionGame">Reaction-time game (buzzer)</option>
+                <option value="servoSweep">Servo sweep (potentiometer)</option>
               </select>
               <select class="lab-select" id="speedSelect">
                 <option value="1">1x speed</option>
@@ -214,6 +217,36 @@
                 <span class="pot-value" id="potValue">512</span>
               </div>
             </div>
+          </div>
+
+          <div class="panel" style="margin-bottom:1.5rem;">
+            <div class="panel-header"><span class="panel-title">Add-on Components</span></div>
+            <div class="board-svg-wrap">
+              <svg viewBox="0 0 320 140" width="100%" style="max-width:360px;" id="addonSvg" xmlns="http://www.w3.org/2000/svg">
+                <!-- Traffic light module: pins 5 (red), 6 (yellow), 7 (green) -->
+                <rect x="20" y="10" width="46" height="98" rx="8" fill="#1b1b1b"/>
+                <circle id="trafficRed" cx="43" cy="32" r="9" fill="#5a2a2a" stroke="#3a1414" stroke-width="1.5"/>
+                <circle id="trafficYellow" cx="43" cy="59" r="9" fill="#5a5228" stroke="#3a3414" stroke-width="1.5"/>
+                <circle id="trafficGreen" cx="43" cy="86" r="9" fill="#2a5a3a" stroke="#143a24" stroke-width="1.5"/>
+                <text x="43" y="122" text-anchor="middle" fill="#dff5e9" font-size="7.5" font-family="monospace">TRAFFIC 5·6·7</text>
+
+                <!-- Piezo buzzer: pin 8 -->
+                <circle cx="150" cy="50" r="20" fill="#2b2b2b" stroke="#111" stroke-width="1.5"/>
+                <circle id="buzzerBody" cx="150" cy="50" r="12" fill="#3a3a3a" stroke="#111" stroke-width="1"/>
+                <path id="buzzerWave1" d="M 178 40 Q 186 50 178 60" fill="none" stroke="#5fe3a3" stroke-width="2" stroke-linecap="round" opacity="0"/>
+                <path id="buzzerWave2" d="M 186 33 Q 198 50 186 67" fill="none" stroke="#5fe3a3" stroke-width="2" stroke-linecap="round" opacity="0"/>
+                <text x="150" y="90" text-anchor="middle" fill="#dff5e9" font-size="7.5" font-family="monospace">BUZZER 8</text>
+
+                <!-- Servo motor: pin 11 -->
+                <rect x="235" y="35" width="40" height="30" rx="3" fill="#2b2b2b" stroke="#111" stroke-width="1.5"/>
+                <circle cx="255" cy="35" r="4" fill="#555" stroke="#111" stroke-width="1"/>
+                <g id="servoArmGroup" style="transform-origin:255px 35px;">
+                  <line id="servoArm" x1="255" y1="35" x2="255" y2="12" stroke="#5fe3a3" stroke-width="3" stroke-linecap="round"/>
+                </g>
+                <text x="255" y="90" text-anchor="middle" fill="#dff5e9" font-size="7.5" font-family="monospace">SERVO 11</text>
+              </svg>
+            </div>
+            <p class="board-caption" id="servoAngleCaption">Traffic light = pins 5/6/7 · Buzzer = tone() on pin 8 · Servo = pin 11, angle 0°</p>
           </div>
 
           <div class="panel">
@@ -327,6 +360,78 @@ void loop() {
   Serial.print("  ->  Brightness: ");
   Serial.println(brightness);
   delay(200);
+}`,
+      trafficLight: `// Classic traffic light state machine — Add-on: Traffic light module
+int RED = 5;
+int YELLOW = 6;
+int GREEN = 7;
+
+void setup() {
+  pinMode(RED, OUTPUT);
+  pinMode(YELLOW, OUTPUT);
+  pinMode(GREEN, OUTPUT);
+}
+
+void loop() {
+  digitalWrite(GREEN, HIGH);
+  delay(2000);
+  digitalWrite(GREEN, LOW);
+
+  digitalWrite(YELLOW, HIGH);
+  delay(500);
+  digitalWrite(YELLOW, LOW);
+
+  digitalWrite(RED, HIGH);
+  delay(2000);
+  digitalWrite(RED, LOW);
+}`,
+      reactionGame: `// Reaction-time game — Add-on: Piezo buzzer (pin 8)
+// Hold the button the instant the buzzer sounds!
+int BUTTON = 2;
+int BUZZER = 8;
+
+void setup() {
+  pinMode(BUTTON, INPUT);
+  Serial.begin(9600);
+  Serial.println("Get ready...");
+}
+
+void loop() {
+  int waitTime = random(1000, 4000);
+  delay(waitTime);
+
+  tone(BUZZER, 880);
+  unsigned long start = millis();
+  Serial.println("GO! Hold the button now.");
+
+  while (digitalRead(BUTTON) == LOW) {
+    delay(5); // yield briefly so the board can register your press
+  }
+  unsigned long reactionTime = millis() - start;
+  noTone(BUZZER);
+  Serial.print("Reaction time (ms): ");
+  Serial.println(reactionTime);
+
+  delay(2000);
+}`,
+      servoSweep: `// Potentiometer-controlled servo — Add-on: Servo motor (pin 11)
+Servo myServo;
+int SENSOR = A0;
+
+void setup() {
+  myServo.attach(11);
+  Serial.begin(9600);
+}
+
+void loop() {
+  int raw = analogRead(SENSOR);
+  int angle = map(raw, 0, 1023, 0, 180);
+  myServo.write(angle);
+  Serial.print("Pot: ");
+  Serial.print(raw);
+  Serial.print("  ->  Angle: ");
+  Serial.println(angle);
+  delay(100);
 }`
     };
 
@@ -345,6 +450,14 @@ void loop() {
     const pushButton = document.getElementById('pushButton');
     const potSlider = document.getElementById('potSlider');
     const potValue = document.getElementById('potValue');
+    const trafficRed = document.getElementById('trafficRed');
+    const trafficYellow = document.getElementById('trafficYellow');
+    const trafficGreen = document.getElementById('trafficGreen');
+    const buzzerBody = document.getElementById('buzzerBody');
+    const buzzerWave1 = document.getElementById('buzzerWave1');
+    const buzzerWave2 = document.getElementById('buzzerWave2');
+    const servoArmGroup = document.getElementById('servoArmGroup');
+    const servoAngleCaption = document.getElementById('servoAngleCaption');
 
     codeEditor.value = PRESETS.blink;
     presetSelect.addEventListener('change', () => { codeEditor.value = PRESETS[presetSelect.value]; setStatus('ready', 'Loaded preset. Press Run.'); });
@@ -367,12 +480,29 @@ void loop() {
       el.setAttribute('fill', on ? '#5fe3a3' : '#3a5a4d');
       el.style.filter = on ? 'drop-shadow(0 0 6px #5fe3a3)' : 'none';
     }
+    function setColorLed(el, on, onColor, offColor) {
+      el.setAttribute('fill', on ? onColor : offColor);
+      el.style.filter = on ? `drop-shadow(0 0 6px ${onColor})` : 'none';
+    }
     function setLedBrightness(el, val) {
       const t = Math.max(0, Math.min(1, val / 255));
       const g = Math.round(90 + t * 145);
       el.setAttribute('fill', `rgb(${Math.round(58 - t*20)}, ${g}, ${Math.round(77 + t*60)})`);
       el.style.filter = t > 0.1 ? `drop-shadow(0 0 ${4 + t*6}px rgba(95,227,163,${t}))` : 'none';
     }
+
+    function setBuzzer(on, freq) {
+      buzzerBody.setAttribute('fill', on ? '#5fe3a3' : '#3a3a3a');
+      buzzerWave1.setAttribute('opacity', on ? '1' : '0');
+      buzzerWave2.setAttribute('opacity', on ? '1' : '0');
+      buzzerBody.style.filter = on ? 'drop-shadow(0 0 5px #5fe3a3)' : 'none';
+    }
+    function setServoAngle(angle) {
+      const a = Math.max(0, Math.min(180, angle));
+      servoArmGroup.style.transform = `rotate(${a - 90}deg)`;
+      servoAngleCaption.textContent = `Traffic light = pins 5/6/7 · Buzzer = tone() on pin 8 · Servo = pin 11, angle ${Math.round(a)}°`;
+    }
+    let buzzerTimer = null;
 
     let serialLineCount = 0;
     const MAX_SERIAL_LINES = 300;
@@ -400,10 +530,21 @@ void loop() {
         digitalWrite: (pin, val) => {
           if (pin === 13) setLed(ledOnboard, val === 1);
           if (pin === 9) setLed(ledExternal, val === 1);
+          if (pin === 5) setColorLed(trafficRed, val === 1, '#ff5252', '#5a2a2a');
+          if (pin === 6) setColorLed(trafficYellow, val === 1, '#ffd23f', '#5a5228');
+          if (pin === 7) setColorLed(trafficGreen, val === 1, '#5fe3a3', '#2a5a3a');
         },
         digitalRead: (pin) => (pin === 2 ? (buttonPressed ? 1 : 0) : 0),
         analogRead: (pin) => (pin === 14 ? parseInt(potSlider.value, 10) : 0),
         analogWrite: (pin, val) => { if (pin === 9) setLedBrightness(ledExternal, val); },
+        tone: (pin, freq) => {
+          if (pin !== 8) return;
+          setBuzzer(true, freq);
+          if (buzzerTimer) clearTimeout(buzzerTimer);
+        },
+        noTone: (pin) => { if (pin === 8) setBuzzer(false); },
+        servoAttach: () => {},
+        servoWrite: (pin, angle) => { if (pin === 11) setServoAngle(angle); },
         print: (s) => serialWrite(s, false),
         println: (s) => serialWrite(s + '\n', false),
         millis: () => Math.round(performance.now() - startTime),
@@ -413,6 +554,11 @@ void loop() {
     function resetBoard() {
       setLed(ledOnboard, false);
       setLed(ledExternal, false);
+      setColorLed(trafficRed, false, '#ff5252', '#5a2a2a');
+      setColorLed(trafficYellow, false, '#ffd23f', '#5a5228');
+      setColorLed(trafficGreen, false, '#5fe3a3', '#2a5a3a');
+      setBuzzer(false);
+      setServoAngle(0);
       serialMonitor.textContent = '// Output from Serial.print()/println() appears here.';
       serialLineCount = 0;
       buttonPressed = false;
