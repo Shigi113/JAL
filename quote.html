@@ -74,9 +74,12 @@
 
     .cust-form { display: grid; gap: 0.85rem; margin-top: 1.5rem; }
     .cust-form label { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); display: block; margin-bottom: 0.35rem; }
-    .cust-form input, .cust-form textarea { width: 100%; padding: 0.7rem 0.85rem; border-radius: 12px; border: 1px solid var(--border); font: inherit; font-size: 0.92rem; background: #fbfcfb; color: var(--text); }
-    .cust-form input:focus, .cust-form textarea:focus { outline: none; border-color: var(--accent); background: #fff; }
+    .cust-form input, .cust-form textarea, .cust-form select { width: 100%; padding: 0.7rem 0.85rem; border-radius: 12px; border: 1px solid var(--border); font: inherit; font-size: 0.92rem; background: #fbfcfb; color: var(--text); }
+    .cust-form input:focus, .cust-form textarea:focus, .cust-form select:focus { outline: none; border-color: var(--accent); background: #fff; }
     .cust-form textarea { resize: vertical; min-height: 70px; }
+    .cust-form .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem; }
+    @media (max-width: 520px) { .cust-form .form-row { grid-template-columns: 1fr; } }
+    .cust-form .extra-block { padding: 0.85rem; border: 1px dashed var(--border); border-radius: 12px; background: rgba(240,143,63,0.05); }
 
     .quote-actions { display: grid; gap: 0.65rem; margin-top: 1.5rem; }
     .button { display: inline-flex; align-items: center; justify-content: center; gap: 0.6rem; border-radius: 999px; border: none; cursor: pointer; transition: transform 0.25s, box-shadow 0.25s, opacity 0.2s; padding: 1rem 1.4rem; width: 100%; font-weight: 700; font-size: 0.92rem; }
@@ -190,9 +193,72 @@
               <label for="custCompany">Company / Organisation</label>
               <input type="text" id="custCompany" placeholder="Optional">
             </div>
+
+            <div class="form-row">
+              <div>
+                <label for="custTimeline">When do you need this?</label>
+                <select id="custTimeline">
+                  <option value="ASAP">ASAP</option>
+                  <option value="2-4 weeks">2–4 weeks</option>
+                  <option value="1-3 months">1–3 months</option>
+                  <option value="Just exploring">Just exploring options</option>
+                </select>
+              </div>
+              <div>
+                <label for="custBudget">Estimated budget</label>
+                <select id="custBudget">
+                  <option value="Under KES 20,000">Under KES 20,000</option>
+                  <option value="KES 20,000 - 50,000">KES 20,000 – 50,000</option>
+                  <option value="KES 50,000 - 150,000">KES 50,000 – 150,000</option>
+                  <option value="KES 150,000+">KES 150,000+</option>
+                  <option value="Not sure yet">Not sure yet</option>
+                </select>
+              </div>
+            </div>
+
             <div>
-              <label for="custNotes">Notes for our team</label>
-              <textarea id="custNotes" placeholder="Delivery location, timelines, or any special requirements..."></textarea>
+              <label for="custLocation">Delivery / installation location</label>
+              <input type="text" id="custLocation" placeholder="e.g. Westlands, Nairobi">
+            </div>
+
+            <div class="form-row">
+              <div>
+                <label for="custContactPref">Preferred contact method</label>
+                <select id="custContactPref">
+                  <option value="WhatsApp">WhatsApp</option>
+                  <option value="Phone call">Phone call</option>
+                  <option value="Email">Email</option>
+                </select>
+              </div>
+              <div>
+                <label for="custContactTime">Best time to reach you</label>
+                <select id="custContactTime">
+                  <option value="Anytime">Anytime</option>
+                  <option value="Morning">Morning</option>
+                  <option value="Afternoon">Afternoon</option>
+                  <option value="Evening">Evening</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="extra-block" id="extraProducts" hidden>
+              <label for="extraProductsText">Installation / technical details</label>
+              <textarea id="extraProductsText" placeholder="Site address if different from above, number of cameras/access points, existing wiring or network, power availability..."></textarea>
+            </div>
+
+            <div class="extra-block" id="extraArduino" hidden>
+              <label for="extraArduinoText">Project details</label>
+              <textarea id="extraArduinoText" placeholder="What are you building? Prototype, competition entry, or classroom use? Any experience level we should know about?"></textarea>
+            </div>
+
+            <div class="extra-block" id="extraEducation" hidden>
+              <label for="extraEducationText">Program details</label>
+              <textarea id="extraEducationText" placeholder="Class size, age group, and whether this is a one-off session or a termly/yearly program..."></textarea>
+            </div>
+
+            <div>
+              <label for="custNotes">Anything else for our team</label>
+              <textarea id="custNotes" placeholder="Any other special requirements..."></textarea>
             </div>
           </form>
 
@@ -311,6 +377,48 @@
       whatsapp: '254114976187'
     };
 
+    /* Paste the Apps Script "Web app URL" from apps-script/Code.gs here
+       once deployed. Leave as-is to disable lead logging. */
+    const LEADS_WEBHOOK_URL = 'PASTE_APPS_SCRIPT_WEB_APP_URL_HERE';
+
+    function submitLead(extra) {
+      if (!LEADS_WEBHOOK_URL || LEADS_WEBHOOK_URL.indexOf('PASTE_') !== -1) return;
+      const selected = getSelectedItems();
+      let total = 0;
+      const itemsSummary = selected.map(s => {
+        const lt = s.item.price * s.qty;
+        total += lt;
+        return `${s.item.name} x${s.qty} (${fmt(lt)})`;
+      }).join('; ');
+      const categoryDetails = {
+        installation: document.getElementById('extraProductsText').value.trim(),
+        project: document.getElementById('extraArduinoText').value.trim(),
+        program: document.getElementById('extraEducationText').value.trim()
+      };
+      const payload = {
+        name: document.getElementById('custName').value.trim(),
+        email: document.getElementById('custEmail').value.trim(),
+        phone: document.getElementById('custPhone').value.trim(),
+        company: document.getElementById('custCompany').value.trim(),
+        timeline: document.getElementById('custTimeline').value,
+        budget: document.getElementById('custBudget').value,
+        deliveryLocation: document.getElementById('custLocation').value.trim(),
+        preferredContact: document.getElementById('custContactPref').value,
+        bestTime: document.getElementById('custContactTime').value,
+        notes: document.getElementById('custNotes').value.trim(),
+        itemsSummary,
+        total,
+        categoryDetails: JSON.stringify(categoryDetails),
+        source: extra && extra.source || 'unknown'
+      };
+      fetch(LEADS_WEBHOOK_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload)
+      }).catch(() => { /* fire-and-forget: PDF/WhatsApp still work if this fails */ });
+    }
+
     const state = {};
 
     function fmt(n) { return 'KES ' + n.toLocaleString('en-KE'); }
@@ -320,8 +428,8 @@
       const aWrap = document.getElementById('catalogArduino');
       const sWrap = document.getElementById('catalogServices');
       const eWrap = document.getElementById('catalogEducation');
-      function row(item) {
-        state[item.id] = { selected: false, qty: 1, item };
+      function row(item, group) {
+        state[item.id] = { selected: false, qty: 1, item, group };
         const el = document.createElement('div');
         el.className = 'catalog-item';
         el.id = 'row-' + item.id;
@@ -336,12 +444,19 @@
           </div>`;
         return el;
       }
-      CATALOG.products.forEach(item => pWrap.appendChild(row(item)));
-      CATALOG.arduino.forEach(item => aWrap.appendChild(row(item)));
-      CATALOG.services.forEach(item => sWrap.appendChild(row(item)));
-      CATALOG.education.forEach(item => eWrap.appendChild(row(item)));
+      CATALOG.products.forEach(item => pWrap.appendChild(row(item, 'products')));
+      CATALOG.arduino.forEach(item => aWrap.appendChild(row(item, 'arduino')));
+      CATALOG.services.forEach(item => sWrap.appendChild(row(item, 'services')));
+      CATALOG.education.forEach(item => eWrap.appendChild(row(item, 'education')));
     }
     renderCatalog();
+
+    function updateExtraBlocks() {
+      const groups = new Set(getSelectedItems().map(s => s.group));
+      document.getElementById('extraProducts').hidden = !(groups.has('products') || groups.has('services'));
+      document.getElementById('extraArduino').hidden = !groups.has('arduino');
+      document.getElementById('extraEducation').hidden = !groups.has('education');
+    }
 
     document.addEventListener('change', (e) => {
       if (e.target.classList.contains('catalog-check')) {
@@ -349,6 +464,7 @@
         state[id].selected = e.target.checked;
         document.getElementById('row-' + id).classList.toggle('selected', e.target.checked);
         renderSummary();
+        updateExtraBlocks();
       }
     });
     document.addEventListener('click', (e) => {
@@ -418,6 +534,11 @@
       return `https://wa.me/${COMPANY.whatsapp}?text=${encodeURIComponent(msg)}`;
     }
 
+    document.getElementById('whatsappBtn').addEventListener('click', (e) => {
+      if (!formValid()) { e.preventDefault(); return; }
+      submitLead({ source: 'WhatsApp' });
+    });
+
     function showToast(msg) {
       const t = document.getElementById('toast');
       t.textContent = msg;
@@ -427,6 +548,7 @@
 
     document.getElementById('downloadBtn').addEventListener('click', () => {
       if (!formValid()) return;
+      submitLead({ source: 'PDF download' });
       generatePDF();
     });
 
