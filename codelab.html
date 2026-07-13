@@ -74,6 +74,10 @@
     /* Board */
     .board-svg-wrap { padding: 1rem 1.25rem 0.5rem; display: flex; justify-content: center; }
     .board-caption { text-align: center; font-size: 0.78rem; color: var(--muted); padding: 0 1.25rem 1rem; }
+    .buy-chips { display: flex; flex-wrap: wrap; gap: 0.5rem; padding: 0 1.25rem 1.25rem; justify-content: center; }
+    .buy-chip { display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.74rem; font-weight: 700; padding: 0.35rem 0.7rem; border-radius: 999px; background: rgba(240,143,63,0.12); color: var(--accent2); border: 1px solid rgba(240,143,63,0.35); text-decoration: none; transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease; }
+    .buy-chip:hover { background: var(--accent2); color: #fff; transform: translateY(-1px); }
+    .buy-chip svg { width: 12px; height: 12px; flex-shrink: 0; }
     .board-controls { display: grid; gap: 0.9rem; padding: 0 1.25rem 1.25rem; }
     .board-control { display: flex; align-items: center; justify-content: space-between; gap: 1rem; background: #fbfcfb; border: 1px solid var(--border); border-radius: 14px; padding: 0.75rem 1rem; }
     .board-control-label { font-size: 0.82rem; font-weight: 700; }
@@ -129,6 +133,8 @@
       <li><a href="codelab.html" class="active">Code Lab</a></li>
       <li><a href="guide.html">Guide Me</a></li>
       <li><a href="quote.html">Get Quote</a></li>
+      <li><a href="quote.html">Get Quote</a></li>
+      <li><a href="account.html">Account</a></li>
       <li><a href="contact.html" class="cta">Contacts</a></li>
     </ul>
   </nav>
@@ -169,6 +175,11 @@
               <button class="lab-btn lab-btn-stop" id="stopBtn" disabled>■ Stop</button>
               <button class="lab-btn lab-btn-reset" id="resetBtn">↺ Reset board</button>
             </div>
+            <div class="lab-controls" id="accountControls">
+              <button class="lab-btn" id="saveSketchBtn" style="display:none;">💾 Save Sketch</button>
+              <a class="lab-btn" id="signInPrompt" href="account.html" style="text-decoration:none;">👤 Sign in to save</a>
+              <span id="accountStatus" style="display:none; font-size:0.78rem; color:var(--muted); font-weight:600;"></span>
+            </div>
           </div>
         </div>
 
@@ -206,6 +217,12 @@
               </svg>
             </div>
             <p class="board-caption">Onboard LED = pin 13 · External LED = pin 9 (PWM) · Button = pin 2 · Potentiometer = A0</p>
+            <div class="buy-chips">
+              <a class="buy-chip" href="quote.html?item=ard-uno,ard-bread,ard-jumpers" target="_blank" rel="noopener">🛒 Starter kit (board + breadboard)</a>
+              <a class="buy-chip" href="quote.html?item=ard-leds" target="_blank" rel="noopener">🛒 LED pack</a>
+              <a class="buy-chip" href="quote.html?item=ard-button" target="_blank" rel="noopener">🛒 Push button</a>
+              <a class="buy-chip" href="quote.html?item=ard-pot" target="_blank" rel="noopener">🛒 Potentiometer</a>
+            </div>
             <div class="board-controls">
               <div class="board-control">
                 <div class="board-control-label">Push Button<span>digitalRead(2)</span></div>
@@ -247,6 +264,11 @@
               </svg>
             </div>
             <p class="board-caption" id="servoAngleCaption">Traffic light = pins 5/6/7 · Buzzer = tone() on pin 8 · Servo = pin 11, angle 0°</p>
+            <div class="buy-chips">
+              <a class="buy-chip" href="quote.html?item=ard-traffic" target="_blank" rel="noopener">🛒 Traffic light module</a>
+              <a class="buy-chip" href="quote.html?item=ard-buzzer" target="_blank" rel="noopener">🛒 Piezo buzzer</a>
+              <a class="buy-chip" href="quote.html?item=ard-servo" target="_blank" rel="noopener">🛒 Servo motor</a>
+            </div>
           </div>
 
           <div class="panel">
@@ -289,6 +311,12 @@
     </div>
   </footer>
 
+  <!-- Firebase (compat build — plain <script> tags, no bundler needed) -->
+  <script src="https://www.gstatic.com/firebasejs/12.16.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/12.16.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore-compat.js"></script>
+  <script src="firebase-config.js"></script>
+  <script src="auth.js"></script>
   <script src="sim-interpreter.js"></script>
   <script>
     const PRESETS = {
@@ -659,6 +687,62 @@ void loop() {
     function handleReveal() { revealItems.forEach(item => { const rect = item.getBoundingClientRect(); if(rect.top < window.innerHeight - 80) item.classList.add('in-view'); }); }
     window.addEventListener('scroll', handleReveal);
     window.addEventListener('load', handleReveal);
+
+    // ---- Learner accounts: save/load sketches ----
+    (function () {
+      const saveBtn = document.getElementById('saveSketchBtn');
+      const signInPrompt = document.getElementById('signInPrompt');
+      const accountStatus = document.getElementById('accountStatus');
+      let currentUser = null;
+      let currentSketchId = new URLSearchParams(window.location.search).get('sketch') || null;
+
+      if (!window.JALAuth || !JALAuth.ready) return; // accounts not configured — leave "Sign in to save" link as-is
+
+      JALAuth.onAuthChange((user) => {
+        currentUser = user;
+        if (user) {
+          saveBtn.style.display = '';
+          signInPrompt.style.display = 'none';
+          accountStatus.style.display = '';
+          accountStatus.textContent = 'Signed in as ' + (user.displayName || user.email);
+          if (currentSketchId) {
+            JALAuth.loadSketch(user.uid, currentSketchId).then((sketch) => {
+              if (sketch) {
+                codeEditor.value = sketch.code;
+                setStatus('ready', 'Loaded "' + sketch.name + '" from your account.');
+              }
+            });
+          }
+        } else {
+          saveBtn.style.display = 'none';
+          signInPrompt.style.display = '';
+          accountStatus.style.display = 'none';
+        }
+      });
+
+      saveBtn.addEventListener('click', () => {
+        if (!currentUser) return;
+        const name = prompt('Name this sketch:', presetSelect.options[presetSelect.selectedIndex].text);
+        if (!name) return;
+        saveBtn.disabled = true;
+        saveBtn.textContent = 'Saving…';
+        JALAuth.saveSketch(currentUser.uid, {
+          id: currentSketchId,
+          name: name,
+          code: codeEditor.value,
+          preset: presetSelect.value
+        }).then((id) => {
+          currentSketchId = id;
+          history.replaceState(null, '', 'codelab.html?sketch=' + encodeURIComponent(id));
+          setStatus('ready', 'Sketch saved to your account.');
+        }).catch(() => {
+          setStatus('ready', 'Could not save — check your connection and try again.');
+        }).finally(() => {
+          saveBtn.disabled = false;
+          saveBtn.textContent = '💾 Save Sketch';
+        });
+      });
+    })();
   </script>
   <a class="whatsapp-float" href="https://wa.me/254114976187?text=Hi%20Jenga%20Labs%20Afritech" target="_blank" rel="noopener" aria-label="Chat on WhatsApp"></a>
 </body>
