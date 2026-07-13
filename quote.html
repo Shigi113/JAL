@@ -346,7 +346,11 @@
         { id: 'ard-motor',    name: 'DC Motor & Wheel Kit',              unit: 'per kit',  price: 1200 },
         { id: 'ard-ultra',    name: 'Ultrasonic Distance Sensor',        unit: 'per unit', price: 500 },
         { id: 'ard-lcd',      name: '16x2 LCD Display (I2C)',            unit: 'per unit', price: 1100 },
-        { id: 'ard-chassis',  name: 'Robotics Starter Chassis Kit',      unit: 'per kit',  price: 3500 }
+        { id: 'ard-chassis',  name: 'Robotics Starter Chassis Kit',      unit: 'per kit',  price: 3500 },
+        { id: 'ard-button',   name: 'Push Button (Tactile, 4-pin)',      unit: 'per pack', price: 200 },
+        { id: 'ard-pot',      name: 'Potentiometer (10K)',               unit: 'per unit', price: 150 },
+        { id: 'ard-buzzer',   name: 'Piezo Buzzer',                      unit: 'per unit', price: 150 },
+        { id: 'ard-traffic',  name: 'Traffic Light LED Module',          unit: 'per unit', price: 450 }
       ],
       services: [
         { id: 'cctv-install', name: 'CCTV Installation & Maintenance', unit: 'per visit',   price: 8000 },
@@ -450,6 +454,33 @@
       CATALOG.education.forEach(item => eWrap.appendChild(row(item, 'education')));
     }
     renderCatalog();
+
+    /* Deep-link support: quote.html?item=ard-leds,ard-servo pre-ticks those
+       catalog rows and scrolls to them. Used by Code Lab's "Buy this part"
+       links so a component in the simulator lands the user on a ready quote. */
+    function preselectFromURL() {
+      const params = new URLSearchParams(window.location.search);
+      const ids = (params.get('item') || '').split(',').map(s => s.trim()).filter(Boolean);
+      if (!ids.length) return;
+      let firstRow = null;
+      ids.forEach(id => {
+        const s = state[id];
+        const row = document.getElementById('row-' + id);
+        if (!s || !row) return;
+        s.selected = true;
+        row.classList.add('selected');
+        const check = row.querySelector('.catalog-check');
+        if (check) check.checked = true;
+        if (!firstRow) firstRow = row;
+      });
+      renderSummary();
+      updateExtraBlocks();
+      if (firstRow) {
+        firstRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        showToast('Added from Code Lab — adjust quantity if needed');
+      }
+    }
+    preselectFromURL();
 
     function updateExtraBlocks() {
       const groups = new Set(getSelectedItems().map(s => s.group));
