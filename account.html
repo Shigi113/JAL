@@ -272,6 +272,15 @@
       if (window.JALAuth && JALAuth.ready) JALAuth.signOutUser();
     });
 
+    function withTimeout(promise, ms, label) {
+      return Promise.race([
+        promise,
+        new Promise((_, reject) => setTimeout(() => reject(new Error(
+          label + ' timed out after ' + (ms / 1000) + 's — check that Firestore Database is created in the Firebase Console and your rules are published.'
+        )), ms))
+      ]);
+    }
+
     function friendlyAuthError(err) {
       const code = err && err.code || '';
       if (code.indexOf('wrong-password') !== -1 || code.indexOf('user-not-found') !== -1 || code.indexOf('invalid-credential') !== -1) return 'Incorrect email or password.';
@@ -312,7 +321,8 @@
       if (!confirm('Delete this sketch? This cannot be undone.')) return;
       const uid = JALAuth.auth.currentUser && JALAuth.auth.currentUser.uid;
       if (!uid) return;
-      JALAuth.deleteSketch(uid, id).then(() => JALAuth.loadSketches(uid)).then(renderSketches);
+      JALAuth.deleteSketch(uid, id).then(() => JALAuth.loadSketches(uid)).then(renderSketches)
+        .catch((err) => alert('Could not delete: ' + (err.message || err)));
     });
 
     if (window.JALAuth) {
@@ -322,7 +332,10 @@
           dashPanel.hidden = false;
           document.getElementById('dashName').textContent = user.displayName || 'Learner';
           document.getElementById('dashEmail').textContent = user.email || '';
-          JALAuth.loadSketches(user.uid).then(renderSketches);
+          withTimeout(JALAuth.loadSketches(user.uid), 10000, 'Loading sketches').then(renderSketches).catch((err) => {
+            document.getElementById('sketchList').innerHTML =
+              '<p class="sketch-empty">' + escapeHtml(err.message || String(err)) + '</p>';
+          });
         } else {
           authPanel.hidden = false;
           dashPanel.hidden = true;
@@ -330,5 +343,6 @@
       });
     }
   </script>
+  <script src="accessibility.js"></script>
 </body>
 </html>
