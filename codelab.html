@@ -698,6 +698,19 @@ void loop() {
 
       if (!window.JALAuth || !JALAuth.ready) return; // accounts not configured — leave "Sign in to save" link as-is
 
+      // Firestore calls should settle in a couple seconds. If a call never
+      // resolves or rejects (e.g. no Firestore database created yet in the
+      // Firebase Console, so the SDK keeps retrying), force a timeout so the
+      // UI shows a real error instead of spinning on "Saving…"/"Loading…" forever.
+      function withTimeout(promise, ms, label) {
+        return Promise.race([
+          promise,
+          new Promise((_, reject) => setTimeout(() => reject(new Error(
+            label + ' timed out after ' + (ms / 1000) + 's — check that Firestore Database is created in the Firebase Console and your rules are published.'
+          )), ms))
+        ]);
+      }
+
       JALAuth.onAuthChange((user) => {
         currentUser = user;
         if (user) {
@@ -706,12 +719,16 @@ void loop() {
           accountStatus.style.display = '';
           accountStatus.textContent = 'Signed in as ' + (user.displayName || user.email);
           if (currentSketchId) {
-            JALAuth.loadSketch(user.uid, currentSketchId).then((sketch) => {
-              if (sketch) {
-                codeEditor.value = sketch.code;
-                setStatus('ready', 'Loaded "' + sketch.name + '" from your account.');
-              }
-            });
+            withTimeout(JALAuth.loadSketch(user.uid, currentSketchId), 10000, 'Loading sketch')
+              .then((sketch) => {
+                if (sketch) {
+                  codeEditor.value = sketch.code;
+                  setStatus('ready', 'Loaded "' + sketch.name + '" from your account.');
+                } else {
+                  setStatus('ready', 'That saved sketch was not found.');
+                }
+              })
+              .catch((err) => setStatus('ready', err.message));
           }
         } else {
           saveBtn.style.display = 'none';
@@ -726,17 +743,17 @@ void loop() {
         if (!name) return;
         saveBtn.disabled = true;
         saveBtn.textContent = 'Saving…';
-        JALAuth.saveSketch(currentUser.uid, {
+        withTimeout(JALAuth.saveSketch(currentUser.uid, {
           id: currentSketchId,
           name: name,
           code: codeEditor.value,
           preset: presetSelect.value
-        }).then((id) => {
+        }), 10000, 'Saving sketch').then((id) => {
           currentSketchId = id;
           history.replaceState(null, '', 'codelab.html?sketch=' + encodeURIComponent(id));
           setStatus('ready', 'Sketch saved to your account.');
-        }).catch(() => {
-          setStatus('ready', 'Could not save — check your connection and try again.');
+        }).catch((err) => {
+          setStatus('ready', err.message || 'Could not save — check your connection and try again.');
         }).finally(() => {
           saveBtn.disabled = false;
           saveBtn.textContent = '💾 Save Sketch';
@@ -745,5 +762,6 @@ void loop() {
     })();
   </script>
   <a class="whatsapp-float" href="https://wa.me/254114976187?text=Hi%20Jenga%20Labs%20Afritech" target="_blank" rel="noopener" aria-label="Chat on WhatsApp"></a>
+  <script src="accessibility.js"></script>
 </body>
 </html>
