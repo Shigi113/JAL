@@ -104,6 +104,19 @@
     .whatsapp-float { position: fixed; right: 1rem; bottom: 1rem; z-index: 1300; display: inline-flex; align-items: center; justify-content: center; gap: 0.55rem; padding: 0.95rem 1.15rem; border-radius: 999px; background: #25D366; color: #fff; font-weight: 700; font-size: 0.95rem; text-decoration: none; box-shadow: 0 18px 40px rgba(37,211,102,0.22); border: 1px solid rgba(255,255,255,0.32); transition: transform 0.18s ease, box-shadow 0.18s ease; }
     .whatsapp-float:hover { transform: translateY(-2px); box-shadow: 0 22px 48px rgba(37,211,102,0.24); }
     .whatsapp-float::before { content: '📱'; }
+    .split-showcase { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; align-items: center; width: min(1120px, 100%); margin: 0 auto 2.5rem; }
+    .split-showcase .showcase-copy { margin: 0; max-width: none; }
+    .split-showcase.reverse .showcase-copy { order: 2; }
+    .split-showcase.reverse .photo-grid { order: 1; }
+    .photo-grid { display: grid; grid-template-columns: 1.3fr 1fr; grid-template-rows: repeat(2, 1fr); gap: 0.85rem; height: 340px; }
+    .photo-tile { position: relative; overflow: hidden; border-radius: 20px; border: 1px solid var(--border); box-shadow: 0 16px 36px rgba(16,42,36,0.08); display: flex; align-items: center; justify-content: center; }
+    .photo-tile.tile-large { grid-row: 1 / 3; background: linear-gradient(135deg, rgba(47,133,90,0.14), rgba(240,143,63,0.12)); }
+    .photo-tile.tile-large img { width: 100%; height: 100%; object-fit: cover; }
+    .photo-tile.tile-large svg { width: 60%; height: auto; color: var(--accent); }
+    .photo-tile.tile-accent-a { background: linear-gradient(150deg, rgba(240,143,63,0.92), rgba(47,133,90,0.55)); }
+    .photo-tile.tile-accent-b { background: linear-gradient(150deg, rgba(47,133,90,0.92), rgba(16,42,36,0.75)); }
+    .photo-tile .tile-caption { position: absolute; left: 0.85rem; bottom: 0.7rem; color: #fff; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.01em; text-shadow: 0 2px 8px rgba(0,0,0,0.28); }
+    @media (max-width: 900px) { .split-showcase { grid-template-columns: 1fr; gap: 1.75rem; } .split-showcase.reverse .showcase-copy, .split-showcase.reverse .photo-grid { order: initial; } .photo-grid { height: 260px; } }
   </style>
 
 </head>
@@ -127,14 +140,14 @@
   </nav>
   <main>
     <section class="section" id="services">
-      <div class="section-header reveal">
-        <div class="section-label">Services</div>
-        <h1 class="section-title">Tailored ICT services to keep your business running smoothly.</h1>
-        <p class="section-copy">From network builds and CCTV to eTIMS readiness, we deliver practical support and maintenance.</p>
-      </div>
-      <div class="visual-frame reveal" data-parallax="0.12">
-        <div class="visual-layer" data-parallax-layer></div>
-        <div class="visual-card visual-photo">
+      <div class="split-showcase">
+        <div class="showcase-copy section-header reveal">
+          <div class="section-label">Services</div>
+          <h1 class="section-title">Tailored ICT services to keep your business running smoothly.</h1>
+          <p class="section-copy">From network builds and CCTV to eTIMS readiness, we deliver practical support and maintenance.</p>
+        </div>
+        <div class="photo-grid reveal" data-parallax="0.12">
+        <div class="photo-tile tile-large">
           <svg viewBox="0 0 260 220" xmlns="http://www.w3.org/2000/svg">
             <rect x="60" y="50" width="140" height="86" rx="10" fill="currentColor" fill-opacity="0.12"/>
             <rect x="70" y="60" width="120" height="66" rx="6" fill="#ffffff" opacity="0.5"/>
@@ -144,7 +157,9 @@
             <path d="M178 56v6M178 82v6M162 72h6M188 72h6M167 61l4 4M185 79l4 4M189 61l-4 4M171 79l-4 4" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity="0.4"/>
             <circle cx="178" cy="72" r="8" fill="#f08f3f"/>
           </svg>
-          <!-- placeholder removed as requested -->
+        </div>
+        <div class="photo-tile tile-accent-a"><span class="tile-caption">CCTV &amp; networking</span></div>
+        <div class="photo-tile tile-accent-b"><span class="tile-caption">eTIMS compliance</span></div>
         </div>
       </div>
       <div class="feature-grid">
