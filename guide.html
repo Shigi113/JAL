@@ -79,6 +79,19 @@
     .wizard-restart { display: block; text-align: center; margin-top: 1.5rem; font-size: 0.85rem; color: var(--muted); font-weight: 600; cursor: pointer; background: none; border: none; }
     .wizard-restart:hover { color: var(--accent); }
 
+    .wizard-lead { margin-top: 1.75rem; padding-top: 1.5rem; border-top: 1px solid var(--border); text-align: left; }
+    .wizard-lead-toggle { display: inline-flex; align-items: center; gap: 0.4rem; background: none; border: none; cursor: pointer; color: var(--accent); font-weight: 700; font-size: 0.88rem; padding: 0; }
+    .wizard-lead-toggle:hover { text-decoration: underline; }
+    .wizard-lead-form { display: none; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-top: 1rem; }
+    .wizard-lead-form.open { display: grid; }
+    .wizard-lead-form input[type="text"], .wizard-lead-form input[type="tel"] { width: 100%; padding: 0.85rem 1rem; border-radius: 12px; border: 1.5px solid var(--border); font: inherit; font-size: 0.92rem; background: #fbfcfb; }
+    .wizard-lead-form input:focus { outline: none; border-color: var(--accent); }
+    .wizard-lead-form .wizard-lead-note, .wizard-lead-form button { grid-column: 1 / -1; }
+    .wizard-lead-hp { position: absolute !important; left: -9999px !important; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+    .wizard-lead-note { font-size: 0.78rem; color: var(--muted); margin: 0; }
+    .wizard-lead-success { display: flex; align-items: center; gap: 0.6rem; padding: 0.9rem 1rem; border-radius: 12px; background: rgba(47,133,90,0.08); color: var(--text); font-size: 0.9rem; font-weight: 600; margin-top: 1.5rem; }
+    @media (max-width: 560px) { .wizard-lead-form { grid-template-columns: 1fr; } }
+
     .footer { padding: 3rem 1.5rem 2.5rem; background: #fff; border-top: 1px solid rgba(16,42,36,0.08); color: var(--muted); font-size: 0.95rem; }
     .footer-inner { max-width: 1120px; margin: 0 auto; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.5rem; align-items: flex-start; }
     .footer-block { display: grid; gap: 1rem; }
@@ -132,7 +145,7 @@
       <div class="section-header reveal" style="text-align:center;">
         <div class="section-label" style="justify-content:center;">Guide Me</div>
         <h1 class="section-title">Not sure where to start?</h1>
-        <p class="section-copy">Answer two quick questions and we'll take you straight to what you need.</p>
+        <p class="section-copy">Answer a few quick questions and we'll take you straight to what you need.</p>
       </div>
 
       <div class="wizard-panel reveal" id="wizardPanel">
@@ -181,9 +194,12 @@
     /* ============================================================
        WIZARD TREE — edit labels/routes here if your pages change.
        Each node is either a "question" (id, question, options[]) or
-       reached directly as a result via an option's `to` field.
-       Each option: { icon, title, desc, next: <question id> }  OR
-                    { icon, title, desc, result: { url, title, copy } }
+       reached directly as a result via an option's `result` field.
+       Each option: { icon, title, desc, next: <question id>, set?: {...} }  OR
+                    { icon, title, desc, result: { url, title, copy }, items?: [...] }
+       `set` merges into the `answers` object (used for the persona tag).
+       `items` are quote.html catalog item ids — see quote.html's CATALOG —
+       carried over as a deep link so "Get a quote instead" arrives pre-ticked.
        ============================================================ */
     const ICONS = {
       cart: '<path d="M3 4h2l2.4 12.4a2 2 0 0 0 2 1.6h7.6a2 2 0 0 0 2-1.6L21 8H6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/><circle cx="10" cy="20" r="1.4" fill="currentColor"/><circle cx="17" cy="20" r="1.4" fill="currentColor"/>',
@@ -200,6 +216,15 @@
     };
 
     const TREE = {
+      persona: {
+        question: "Who are we speaking with today?",
+        options: [
+          { icon: 'cap', title: 'A school or STEM program', desc: 'Teachers, administrators, STEM coordinators.', next: 'start', set: { persona: 'School' } },
+          { icon: 'building', title: 'A business or SME', desc: 'Retail, hospitality, office, small business.', next: 'start', set: { persona: 'Business/SME' } },
+          { icon: 'users', title: 'Government or NGO', desc: 'County, ministry, institutional partner.', next: 'start', set: { persona: 'Government/NGO' } },
+          { icon: 'compass', title: 'Just me, personally', desc: 'Individual buyer or learner.', next: 'start', set: { persona: 'Individual' } }
+        ]
+      },
       start: {
         question: "What brings you here today?",
         options: [
@@ -212,46 +237,65 @@
       products: {
         question: "What kind of product are you after?",
         options: [
-          { icon: 'pen', title: 'Office & stationery essentials', desc: 'Everyday supplies for desks and admin.', result: { url: 'products.html#products', title: 'Head to Products', copy: 'Our Products page has office stationery, networking gear, printers and more — all in one place.' } },
-          { icon: 'wifi', title: 'WiFi, networking & security hardware', desc: 'Routers, access points, CCTV kit.', result: { url: 'products.html#products', title: 'Head to Products', copy: 'You\'ll find WiFi & networking essentials plus CCTV & security hardware on our Products page.' } },
-          { icon: 'cart', title: 'POS, printing & cash handling devices', desc: 'Thermal printers, cash drawers, VSCU.', result: { url: 'products.html#products', title: 'Head to Products', copy: 'Our Products page lists thermal printers, cash drawers and VSCU compliance devices.' } },
-          { icon: 'chip', title: 'Arduino & robotics components', desc: 'Boards, sensors, motors, kits — part by part.', result: { url: 'products.html#arduino-components', title: 'Head to Arduino Components', copy: 'We sell genuine Arduino & robotics components individually, so you only buy what your build needs.' } }
+          { icon: 'pen', title: 'Office & stationery essentials', desc: 'Everyday supplies for desks and admin.', items: ['stationery'], result: { url: 'products.html#products', title: 'Head to Products', copy: 'Our Products page has office stationery, networking gear, printers and more — all in one place.' } },
+          { icon: 'wifi', title: 'WiFi, networking & security hardware', desc: 'Routers, access points, CCTV kit.', items: ['wifi-ess', 'cctv-hw'], result: { url: 'products.html#products', title: 'Head to Products', copy: 'You\'ll find WiFi & networking essentials plus CCTV & security hardware on our Products page.' } },
+          { icon: 'cart', title: 'POS, printing & cash handling devices', desc: 'Thermal printers, cash drawers, VSCU.', items: ['bt-printer', 'comstore-58', 'cash-drawer'], result: { url: 'products.html#products', title: 'Head to Products', copy: 'Our Products page lists thermal printers, cash drawers and VSCU compliance devices.' } },
+          { icon: 'chip', title: 'Arduino & robotics components', desc: 'Boards, sensors, motors, kits — part by part.', items: ['ard-uno', 'ard-bread'], result: { url: 'products.html#arduino-components', title: 'Head to Arduino Components', copy: 'We sell genuine Arduino & robotics components individually, so you only buy what your build needs.' } }
         ]
       },
       services: {
         question: "What service do you need?",
         options: [
-          { icon: 'cctv', title: 'CCTV & security installation', desc: 'Camera systems, monitoring, maintenance.', result: { url: 'services.html#services', title: 'Head to Services', copy: 'CCTV installation & maintenance is listed on our Services page, alongside our full support offering.' } },
-          { icon: 'wifi', title: 'WiFi network setup', desc: 'Secure, scalable wireless networks.', result: { url: 'services.html#services', title: 'Head to Services', copy: 'WiFi network setup & configuration is on our Services page — take a look at what\'s included.' } },
-          { icon: 'tools', title: 'Computer repair & maintenance', desc: 'Diagnostics and preventive care.', result: { url: 'services.html#services', title: 'Head to Services', copy: 'Computer repair and maintenance is one of our core services — see the details on the Services page.' } },
-          { icon: 'pen', title: 'Web dev, hosting & eTIMS', desc: 'Websites, email hosting, KRA integration.', result: { url: 'services.html#services', title: 'Head to Services', copy: 'Web development, domain hosting and eTIMS integration are all on our Services page.' } }
+          { icon: 'cctv', title: 'CCTV & security installation', desc: 'Camera systems, monitoring, maintenance.', items: ['cctv-install'], result: { url: 'services.html#services', title: 'Head to Services', copy: 'CCTV installation & maintenance is listed on our Services page, alongside our full support offering.' } },
+          { icon: 'wifi', title: 'WiFi network setup', desc: 'Secure, scalable wireless networks.', items: ['wifi-setup'], result: { url: 'services.html#services', title: 'Head to Services', copy: 'WiFi network setup & configuration is on our Services page — take a look at what\'s included.' } },
+          { icon: 'tools', title: 'Computer repair & maintenance', desc: 'Diagnostics and preventive care.', items: ['pc-repair'], result: { url: 'services.html#services', title: 'Head to Services', copy: 'Computer repair and maintenance is one of our core services — see the details on the Services page.' } },
+          { icon: 'pen', title: 'Web dev, hosting & eTIMS', desc: 'Websites, email hosting, KRA integration.', items: ['web-dev', 'etims'], result: { url: 'services.html#services', title: 'Head to Services', copy: 'Web development, domain hosting and eTIMS integration are all on our Services page.' } }
         ]
       },
       education: {
         question: "What scale of STEM program fits you?",
         options: [
-          { icon: 'compass', title: 'A single taster lesson', desc: 'One hands-on workshop to spark interest.', result: { url: 'services.html#tier-lesson', title: 'Single Lesson — Introductory Workshop', copy: 'A one-off, hands-on Arduino & robotics session — perfect for a first taste of STEM. Details and pricing are on our Services page.' } },
-          { icon: 'cap', title: 'A term-long program', desc: 'Weekly lessons across one school term.', result: { url: 'services.html#tier-term', title: 'Term Program — Term-Long Curriculum', copy: 'A structured, weekly Arduino & robotics course for a full term. See what\'s included on our Services page.' } },
-          { icon: 'building', title: 'A full academic year', desc: 'Our flagship, year-round STEM program.', result: { url: 'services.html#tier-year', title: 'Year Program — Full Academic Year', copy: 'Our flagship offering: a full-year robotics & STEM program with club setup and teacher training.' } },
-          { icon: 'users', title: 'A ministry or large institutional partnership', desc: 'County, ministry or multi-school rollout.', result: { url: 'services.html#tier-institutional', title: 'Ministry & Partnership Program', copy: 'We work directly with counties, ministries and NGOs on multi-school STEM and networking rollouts. Let\'s talk scope.' } }
+          { icon: 'compass', title: 'A single taster lesson', desc: 'One hands-on workshop to spark interest.', items: ['edu-lesson'], result: { url: 'services.html#tier-lesson', title: 'Single Lesson — Introductory Workshop', copy: 'A one-off, hands-on Arduino & robotics session — perfect for a first taste of STEM. Details and pricing are on our Services page.' } },
+          { icon: 'cap', title: 'A term-long program', desc: 'Weekly lessons across one school term.', items: ['edu-term'], result: { url: 'services.html#tier-term', title: 'Term Program — Term-Long Curriculum', copy: 'A structured, weekly Arduino & robotics course for a full term. See what\'s included on our Services page.' } },
+          { icon: 'building', title: 'A full academic year', desc: 'Our flagship, year-round STEM program.', items: ['edu-year'], result: { url: 'services.html#tier-year', title: 'Year Program — Full Academic Year', copy: 'Our flagship offering: a full-year robotics & STEM program with club setup and teacher training.' } },
+          { icon: 'users', title: 'A ministry or large institutional partnership', desc: 'County, ministry or multi-school rollout.', items: [], result: { url: 'services.html#tier-institutional', title: 'Ministry & Partnership Program', copy: 'We work directly with counties, ministries and NGOs on multi-school STEM and networking rollouts. Let\'s talk scope.' } }
         ]
       },
       explore: {
         question: "What would help most right now?",
         options: [
-          { icon: 'building', title: 'See completed projects', desc: 'Real installs and partnerships we\'ve delivered.', result: { url: 'projects.html#projects', title: 'Head to Projects', copy: 'Browse real installations and partnerships we\'ve delivered across Kenya.' } },
-          { icon: 'users', title: 'Meet the team', desc: 'Who\'s behind Jengalabs Afritech.', result: { url: 'team.html#team', title: 'Head to Team', copy: 'Get to know the people behind Jengalabs Afritech Limited.' } },
-          { icon: 'chip', title: 'Learn about our Arduino teaching', desc: 'Our approach to hands-on STEM education.', result: { url: 'arduino.html#Arduino', title: 'Head to Arduino', copy: 'See how we approach hands-on Arduino and design-thinking education.' } },
-          { icon: 'mail', title: 'Just want to get in touch', desc: 'Talk to a real person.', result: { url: 'contact.html#contact', title: 'Head to Contact', copy: 'Our contact details, office location and WhatsApp link are all on this page.' } }
+          { icon: 'building', title: 'See completed projects', desc: 'Real installs and partnerships we\'ve delivered.', items: [], result: { url: 'projects.html#projects', title: 'Head to Projects', copy: 'Browse real installations and partnerships we\'ve delivered across Kenya.' } },
+          { icon: 'users', title: 'Meet the team', desc: 'Who\'s behind Jengalabs Afritech.', items: [], result: { url: 'team.html#team', title: 'Head to Team', copy: 'Get to know the people behind Jengalabs Afritech Limited.' } },
+          { icon: 'chip', title: 'Learn about our Arduino teaching', desc: 'Our approach to hands-on STEM education.', items: [], result: { url: 'arduino.html#Arduino', title: 'Head to Arduino', copy: 'See how we approach hands-on Arduino and design-thinking education.' } },
+          { icon: 'mail', title: 'Just want to get in touch', desc: 'Talk to a real person.', items: [], result: { url: 'contact.html#contact', title: 'Head to Contact', copy: 'Our contact details, office location and WhatsApp link are all on this page.' } }
         ]
       }
     };
+
+    const TOTAL_STEPS = 3; // persona -> category -> sub-choice -> result
+
+    // Same Apps Script Web App URL you paste into quote.html's LEADS_WEBHOOK_URL,
+    // so Guide Me leads land in the same Google Sheet. This URL is not a secret —
+    // Apps Script web apps are designed to be called from client-side JS — but the
+    // ACTUAL security boundary is server-side: your Apps Script must independently
+    // validate/sanitize every field before writing it to the Sheet. Never trust the
+    // client-side checks below as the real defense; they only improve UX.
+    const LEADS_WEBHOOK_URL = 'PASTE_APPS_SCRIPT_WEB_APP_URL_HERE';
 
     const stageEl = document.getElementById('wizardStage');
     const progressEl = document.getElementById('wizardProgress');
     const backBtn = document.getElementById('wizardBack');
     const restartBtn = document.getElementById('wizardRestart');
-    const history = ['start'];
+    const history = ['persona'];
+    const answers = { persona: null, trail: [] };
+
+    // Escapes any value before it's ever inserted via innerHTML. TREE content
+    // above is developer-authored and already safe, but the lead-capture name
+    // a visitor types in below is NOT — this is what stands between that field
+    // and a stored/reflected XSS the moment it's echoed back on screen.
+    function escapeHtml(str) {
+      return String(str).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+    }
 
     function iconSvg(name) {
       return `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">${ICONS[name] || ICONS.compass}</svg>`;
@@ -270,7 +314,7 @@
     function renderQuestion(nodeId) {
       const node = TREE[nodeId];
       const stepIndex = history.length - 1;
-      renderProgress(stepIndex, 2, false);
+      renderProgress(stepIndex, TOTAL_STEPS, false);
       backBtn.hidden = history.length <= 1;
       restartBtn.hidden = true;
       stageEl.innerHTML = `
@@ -285,45 +329,159 @@
       stageEl.querySelectorAll('.wizard-option').forEach(btn => {
         btn.addEventListener('click', () => {
           const opt = node.options[parseInt(btn.dataset.index, 10)];
+          if (opt.set) Object.assign(answers, opt.set);
+          answers.trail.push(opt.title);
           if (opt.next) {
             history.push(opt.next);
             renderQuestion(opt.next);
           } else if (opt.result) {
-            renderResult(opt.result);
+            renderResult(opt.result, opt.items || []);
           }
         });
       });
     }
 
-    function renderResult(result) {
-      renderProgress(2, 2, true);
+    // Builds a query string of routing context only — persona + source + (optionally)
+    // catalog item ids. Deliberately never carries name/phone/email: URLs get logged
+    // in browser history, server access logs and Referer headers, so contact details
+    // must only ever travel inside the POST body to the webhook, never in a link.
+    // Every value is passed through URLSearchParams, which percent-encodes it —
+    // defense in depth even though every value here is a known-safe developer string.
+    function buildParams(extra) {
+      const params = new URLSearchParams();
+      params.set('source', 'guide');
+      if (answers.persona) params.set('persona', answers.persona);
+      Object.entries(extra || {}).forEach(([key, value]) => { if (value) params.set(key, value); });
+      return params.toString();
+    }
+
+    function renderResult(result, items) {
+      renderProgress(TOTAL_STEPS - 1, TOTAL_STEPS, true);
       backBtn.hidden = false;
       restartBtn.hidden = false;
+
+      const hashIndex = result.url.indexOf('#');
+      const baseUrl = hashIndex === -1 ? result.url : result.url.slice(0, hashIndex);
+      const hash = hashIndex === -1 ? '' : result.url.slice(hashIndex);
+      const takeUrl = `${baseUrl}?${buildParams()}${hash}`;
+      const quoteUrl = `quote.html?${buildParams(items.length ? { item: items.join(',') } : {})}`;
+
       stageEl.innerHTML = `
         <div class="wizard-result">
           <div class="wizard-result-icon"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 12.5l4.5 4.5L19 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
           <h2 class="wizard-result-title">${result.title}</h2>
           <p class="wizard-result-copy">${result.copy}</p>
           <div class="wizard-result-actions">
-            <a class="button button-primary" href="${result.url}">Take me there</a>
-            <a class="button button-secondary" href="quote.html">Get a quote instead</a>
+            <a class="button button-primary" href="${takeUrl}">Take me there</a>
+            <a class="button button-secondary" href="${quoteUrl}">Get a quote instead</a>
+          </div>
+          <div class="wizard-lead">
+            <button class="wizard-lead-toggle" id="leadToggle" type="button">Prefer we contact you instead? →</button>
+            <form class="wizard-lead-form" id="leadForm" novalidate>
+              <input type="text" name="company_website" class="wizard-lead-hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+              <input type="text" id="leadName" placeholder="Your name" maxlength="80" autocomplete="name" required>
+              <input type="tel" id="leadPhone" placeholder="Phone or WhatsApp number" maxlength="20" autocomplete="tel" required>
+              <p class="wizard-lead-note">Optional — we'll only use this to follow up on what you told us above.</p>
+              <button type="submit" class="button button-primary" style="justify-self:start;">Send my details</button>
+            </form>
           </div>
         </div>`;
+
+      const leadToggle = document.getElementById('leadToggle');
+      const leadForm = document.getElementById('leadForm');
+      leadToggle.addEventListener('click', () => {
+        const open = leadForm.classList.toggle('open');
+        leadToggle.hidden = open;
+      });
+      leadForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        submitGuideLead(leadForm);
+      });
+    }
+
+    function submitGuideLead(form) {
+      // Honeypot: a field real visitors never see or fill. Any bot that fills
+      // every input blindly trips this — we quietly no-op instead of posting
+      // its junk data or revealing that it was caught.
+      if (form.elements['company_website'].value) {
+        showLeadSuccess(form, '');
+        return;
+      }
+
+      const name = form.querySelector('#leadName').value.trim().slice(0, 80);
+      const phone = form.querySelector('#leadPhone').value.trim().slice(0, 20);
+
+      // Client-side validation is a UX convenience only, not a security control —
+      // the Apps Script endpoint must re-validate everything server-side regardless.
+      if (!name || !/^[0-9+\-\s()]{7,20}$/.test(phone)) {
+        showLeadError(form, 'Please add your name and a valid phone number.');
+        return;
+      }
+
+      const payload = {
+        name,
+        email: '',
+        phone,
+        company: '',
+        timeline: '',
+        budget: '',
+        deliveryLocation: '',
+        preferredContact: 'Phone/WhatsApp',
+        bestTime: '',
+        notes: 'Guide Me answers: ' + answers.trail.map(t => String(t).slice(0, 120)).join(' \u2192 '),
+        itemsSummary: '',
+        total: 0,
+        categoryDetails: JSON.stringify({}),
+        source: 'Guide'
+      };
+
+      if (LEADS_WEBHOOK_URL && LEADS_WEBHOOK_URL.indexOf('PASTE_') === -1) {
+        fetch(LEADS_WEBHOOK_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(payload)
+        }).catch(() => { /* fire-and-forget: never block the confirmation on network state */ });
+      }
+
+      showLeadSuccess(form, name);
+    }
+
+    function showLeadSuccess(form, name) {
+      const wrap = form.parentElement;
+      const greeting = name ? `Thanks, ${escapeHtml(name)}` : 'Thanks';
+      wrap.innerHTML = `<div class="wizard-lead-success">${greeting} — we'll be in touch shortly.</div>`;
+    }
+
+    function showLeadError(form, message) {
+      let note = form.querySelector('.wizard-lead-error');
+      if (!note) {
+        note = document.createElement('p');
+        note.className = 'wizard-lead-error';
+        note.style.cssText = 'color:#c0392b;font-size:0.82rem;margin:0;';
+        form.insertBefore(note, form.querySelector('button[type="submit"]'));
+      }
+      // textContent, never innerHTML: even though this message is developer-authored
+      // today, this keeps the function safe if it's ever fed dynamic text later.
+      note.textContent = message;
     }
 
     backBtn.addEventListener('click', () => {
       if (history.length > 1) {
         history.pop();
+        answers.trail.pop();
         renderQuestion(history[history.length - 1]);
       }
     });
     restartBtn.addEventListener('click', () => {
       history.length = 0;
-      history.push('start');
-      renderQuestion('start');
+      history.push('persona');
+      answers.persona = null;
+      answers.trail = [];
+      renderQuestion('persona');
     });
 
-    renderQuestion('start');
+    renderQuestion('persona');
 
     // Nav + reveal behaviour, shared with the rest of the site
     const menuToggle = document.getElementById('menuToggle');
