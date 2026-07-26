@@ -123,7 +123,10 @@
     .photo-tile.tile-large svg { width: 60%; height: auto; color: var(--accent); }
     .photo-tile.tile-accent-a { background: linear-gradient(150deg, rgba(240,143,63,0.92), rgba(47,133,90,0.55)); }
     .photo-tile.tile-accent-b { background: linear-gradient(150deg, rgba(47,133,90,0.92), rgba(16,42,36,0.75)); }
-    .photo-tile .tile-caption { position: absolute; left: 0.85rem; bottom: 0.7rem; color: #fff; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.01em; text-shadow: 0 2px 8px rgba(0,0,0,0.28); }
+    .photo-tile.tile-accent-a img, .photo-tile.tile-accent-b img { width: 100%; height: 100%; object-fit: cover; object-position: center; }
+    .photo-tile.tile-accent-a::after, .photo-tile.tile-accent-b::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to top, rgba(10,20,16,0.62) 0%, rgba(10,20,16,0) 48%); }
+    .photo-tile.tile-large::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to top, rgba(10,20,16,0.55) 0%, rgba(10,20,16,0) 42%); }
+    .photo-tile .tile-caption { position: absolute; left: 0.85rem; bottom: 0.7rem; color: #fff; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.01em; text-shadow: 0 2px 8px rgba(0,0,0,0.28); z-index: 2; }
     @media (max-width: 900px) { .split-showcase { grid-template-columns: 1fr; gap: 1.75rem; } .split-showcase.reverse .showcase-copy, .split-showcase.reverse .photo-grid { order: initial; } .photo-grid { height: 260px; } }
   </style>
 
@@ -153,19 +156,12 @@
         <div class="showcase-copy section-header reveal">
           <div class="section-label">Managed IT Support Kenya</div>
           <h1 class="section-title">Tailored ICT services to keep your business running smoothly.</h1>
-          <p class="section-copy">Managed IT support, business networking, CCTV and eTIMS readiness — outsourced ICT that keeps Nairobi businesses running without an in-house team.</p>
+          <p class="section-copy">Managed IT support, business networking, POS with eTIMS readiness — outsourced ICT that keeps Nairobi businesses running without an in-house team.</p>
         </div>
         <div class="photo-grid reveal" data-parallax="0.12">
         <div class="photo-tile tile-large">
-          <svg viewBox="0 0 260 220" xmlns="http://www.w3.org/2000/svg">
-            <rect x="60" y="50" width="140" height="86" rx="10" fill="currentColor" fill-opacity="0.12"/>
-            <rect x="70" y="60" width="120" height="66" rx="6" fill="#ffffff" opacity="0.5"/>
-            <rect x="40" y="136" width="180" height="14" rx="7" fill="currentColor" fill-opacity="0.18"/>
-            <path d="M92 96a15 15 0 0 1 21-14l-10 10 4 4 10-10a15 15 0 0 1-14 21l-26 26-9-9 24-24Z" fill="currentColor" opacity="0.45"/>
-            <circle cx="178" cy="72" r="26" fill="currentColor" fill-opacity="0.16"/>
-            <path d="M178 56v6M178 82v6M162 72h6M188 72h6M167 61l4 4M185 79l4 4M189 61l-4 4M171 79l-4 4" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity="0.4"/>
-            <circle cx="178" cy="72" r="8" fill="#f08f3f"/>
-          </svg>
+          <img src="jengapos.png" alt="JengaPOS point-of-sale system on a handheld device" />
+          <span class="tile-caption">JengaPOS System</span>
         </div>
         <div class="photo-tile tile-accent-a"><span class="tile-caption">CCTV &amp; networking</span></div>
         <div class="photo-tile tile-accent-b"><span class="tile-caption">eTIMS compliance</span></div>
@@ -178,7 +174,7 @@
         <div class="feature-card"><svg class="card-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 6l10-4 10 4v10a10 10 0 0 1-10 10 10 10 0 0 1-10-10V6z" stroke="currentColor" stroke-width="1.5"/><path d="M12 10v6M9 13h6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg><strong>Web Dev & Hosting</strong><p>Modern websites with reliable hosting for your business or service brand.</p></div>
         <div class="feature-card"><svg class="card-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="4" width="20" height="14" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M2 8h20M6 16v2M12 16v2M18 16v2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M5 6h14" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg><strong>Domain Email Hosting</strong><p>Branded email hosting that reinforces your professionalism.</p></div>
         <div class="feature-card"><svg class="card-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="8" r="3" stroke="currentColor" stroke-width="1.5"/><path d="M20 20c0-4.418-3.582-8-8-8s-8 3.582-8 8" stroke="currentColor" stroke-width="1.5"/><path d="M16 12m-1.5 0a1.5 1.5 0 1 1 3 0a1.5 1.5 0 0 1-3 0" fill="currentColor"/><path d="M14 18h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg><strong>IT Consultation & Training</strong><p>Guidance and staff training that improves ICT adoption and uptime.</p></div>
-        <div class="feature-card"><svg class="card-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 3h18a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z" stroke="currentColor" stroke-width="1.5"/><path d="M9 9h6M9 13h4M9 17h3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M18 9v8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg><strong>eTIMS Integration & Consultation</strong><p>Full eTIMS onboarding, KRA integration and compliance follow-through.</p></div>
+        <div class="feature-card"><svg class="card-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 3h18a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z" stroke="currentColor" stroke-width="1.5"/><path d="M9 9h6M9 13h4M9 17h3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M18 9v8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg><strong>JengaPOS with eTIMS readiness</strong><p>Full Point of Sale setup with ready eTIMS onboarding, KRA integration and compliance follow-through.</p></div>
       </div>
       <p class="section-copy" style="max-width:720px;margin:2rem auto 0;text-align:center;">Not sure where to start? Read <a href="why-nairobi-businesses-need-ict-maintenance.html" style="color:var(--accent);font-weight:700;">Why Nairobi Businesses Need Regular ICT Maintenance</a>.</p>
     </section>
@@ -274,7 +270,7 @@
           <a class="social-link" href="https://twitter.com/jengalabs" target="_blank" rel="noopener">Twitter</a>
           <a class="social-link" href="https://www.facebook.com/jengalabs" target="_blank" rel="noopener">Facebook</a>
         </div>
-        <p class="footer-note">© 2026 Jengalabs Afritech Limited.</p>
+        <p class="footer-note">© 2025 Jengalabs Afritech Limited.</p>
       </div>
     </div>
   </footer>
