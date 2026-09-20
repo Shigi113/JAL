@@ -65,6 +65,23 @@
     .qty-btn:hover { background: rgba(47,133,90,0.08); }
     .qty-val { width: 28px; text-align: center; font-weight: 700; font-size: 0.92rem; }
 
+    /* Photo-card grid — used for Products & Arduino. Drop a photo path into
+       each item's `img` field in CATALOG below and it appears here automatically;
+       items with no `img` yet show a placeholder so the grid still lines up. */
+    .catalog-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1rem; }
+    .catalog-card { position: relative; display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--border); border-radius: 18px; overflow: hidden; transition: border-color 0.2s ease, box-shadow 0.2s ease; }
+    .catalog-card.selected { border-color: var(--accent); box-shadow: 0 12px 28px rgba(47,133,90,0.1); }
+    .catalog-photo { position: relative; display: block; aspect-ratio: 1 / 1; background: #f1efe9; cursor: pointer; }
+    .catalog-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .catalog-photo-placeholder { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 0.5rem; text-align: center; color: var(--muted); font-size: 0.7rem; line-height: 1.4; }
+    .catalog-photo .catalog-check { position: absolute; top: 0.55rem; right: 0.55rem; margin: 0; z-index: 2; }
+    .catalog-card-body { display: grid; gap: 0.3rem; padding: 0.8rem 0.9rem 0.95rem; }
+    .catalog-card-body strong { font-size: 0.9rem; color: var(--text); line-height: 1.3; }
+    .catalog-card-body > span { font-size: 0.78rem; color: var(--muted); }
+    .catalog-card .catalog-price { font-family: 'Syne', sans-serif; font-weight: 700; color: var(--accent); font-size: 0.9rem; }
+    .catalog-card .catalog-qty { display: flex; align-items: center; gap: 0.4rem; margin-top: 0.2rem; opacity: 0.35; pointer-events: none; transition: opacity 0.2s ease; }
+    .catalog-card.selected .catalog-qty { opacity: 1; pointer-events: auto; }
+
     .summary-card { position: sticky; top: 110px; background: var(--surface); border: 1px solid var(--border); border-radius: 24px; padding: 1.75rem; box-shadow: 0 24px 48px rgba(16,42,36,0.08); }
     .summary-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.15rem; margin: 0 0 1rem; }
     .summary-empty { color: var(--muted); font-size: 0.9rem; }
@@ -127,6 +144,8 @@
       .catalog-price { grid-column: 2; }
       .catalog-qty { grid-column: 2; opacity: 1; pointer-events: none; }
       .catalog-item.selected .catalog-qty { pointer-events: auto; }
+      .catalog-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 0.75rem; }
+      .catalog-card .catalog-qty { opacity: 1; pointer-events: auto; }
       .footer-inner { grid-template-columns: 1fr; }
       .social-links { justify-content: flex-start; }
     }
@@ -164,11 +183,11 @@
         <div class="catalog-col">
           <div class="catalog-group reveal">
             <h2 class="catalog-group-title">Products</h2>
-            <div id="catalogProducts"></div>
+            <div id="catalogProducts" class="catalog-grid"></div>
           </div>
           <div class="catalog-group reveal">
             <h2 class="catalog-group-title">Arduino &amp; Robotics Components</h2>
-            <div id="catalogArduino"></div>
+            <div id="catalogArduino" class="catalog-grid"></div>
           </div>
           <div class="catalog-group reveal">
             <h2 class="catalog-group-title">Services</h2>
@@ -327,41 +346,41 @@
        ============================================================ */
     const CATALOG = {
       products: [
-        { id: 'stationery',  name: 'Office Stationary',              unit: 'per set',     price: 1500 },
-        { id: 'wifi-ess',    name: 'WiFi & Networking Essentials',    unit: 'per unit',    price: 6500 },
-        { id: 'cctv-hw',     name: 'CCTV & Security',                 unit: '8 channel',  price: 19500 },
-        { id: 'bt-printer',  name: 'Bluetooth XPrinter',               unit: 'per unit',    price: 7000 },
-        { id: 'comstore-58', name: 'Comstore 58mm Thermal Printer',    unit: 'per unit',    price: 6000 },
-        { id: 'label-printer', name: 'Thermal Label Printer',          unit: 'per unit',    price: 9500 },
-        { id: 'cash-drawer', name: 'Cash Drawer',                      unit: 'per unit',    price: 4500 },
-        { id: 'connectors', name: 'Connectors',                      unit: 'per pair',    price: 50 },
-        { id: 'dvr 16 channel', name: 'HikVision DVR 16 Channel',                 unit: 'per unit',    price: 9900 },
-        { id: 'hikvision smart hybrid', name: 'HikVision Smart Hybrid Light',                      unit: 'per unit',    price: 3200 },
-        { id: '200m cable', name: '200M Cable',                      unit: 'per unit',    price: 4800 },
-        { id: '20a power supply', name: '20A Power Supply',                      unit: 'per unit',    price: 2000 },
-        { id: '1tb harddriver', name: '1TB Harddrive',                      unit: 'per unit',    price: 5800 },
-        { id: 'adaptor boxes', name: 'Adaptor Boxes',                      unit: 'per unit',    price: 120 },
-        { id: 'tp link router', name: 'TP Link Router',                      unit: 'per unit',    price: 1500 },
-        { id: 'tp link switch', name: 'TP Link Switch',                      unit: 'per unit',    price: 1300 },
-        { id: 'crimping tool', name: 'Crimping Tool',                      unit: 'per unit',    price: 1700 },
-        { id: 'android vscu device', name: 'Android VSCU Device',                      unit: 'per unit',    price: 30000 },
-        { id: 'vscu-device', name: 'CRV VSCU Comstore Device',         unit: 'per unit',    price: 15000 }
+        { id: 'stationery',  name: 'Office Stationary',              unit: 'per set',     price: 1500, img: '' },
+        { id: 'wifi-ess',    name: 'WiFi & Networking Essentials',    unit: 'per unit',    price: 6500, img: '' },
+        { id: 'cctv-hw',     name: 'CCTV & Security',                 unit: '8 channel',  price: 19500, img: '' },
+        { id: 'bt-printer',  name: 'Bluetooth XPrinter',               unit: 'per unit',    price: 7000, img: '' },
+        { id: 'comstore-58', name: 'Comstore 58mm Thermal Printer',    unit: 'per unit',    price: 6000, img: 'comstore.png' },
+        { id: 'label-printer', name: 'Thermal Label Printer',          unit: 'per unit',    price: 9500, img: '' },
+        { id: 'cash-drawer', name: 'Cash Drawer',                      unit: 'per unit',    price: 4500, img: '' },
+        { id: 'connectors', name: 'Connectors',                      unit: 'per pair',    price: 50, img: '' },
+        { id: 'dvr 16 channel', name: 'HikVision DVR 16 Channel',                 unit: 'per unit',    price: 9900, img: '' },
+        { id: 'hikvision smart hybrid', name: 'HikVision Smart Hybrid Light',                      unit: 'per unit',    price: 3200, img: '' },
+        { id: '200m cable', name: '200M Cable',                      unit: 'per unit',    price: 4800, img: '' },
+        { id: '20a power supply', name: '20A Power Supply',                      unit: 'per unit',    price: 2000, img: '' },
+        { id: '1tb harddriver', name: '1TB Harddrive',                      unit: 'per unit',    price: 5800, img: '' },
+        { id: 'adaptor boxes', name: 'Mikrotik L009',                      unit: 'per unit',    price: 18000, img: 'mikrotik.jpeg' },
+        { id: 'tp link router', name: 'TP Link Router',                      unit: 'per unit',    price: 1500, img: '' },
+        { id: 'tp link switch', name: 'TP Link Switch',                      unit: 'per unit',    price: 1300, img: '' },
+        { id: 'crimping tool', name: 'Crimping Tool',                      unit: 'per unit',    price: 1700, img: '' },
+        { id: 'android vscu device', name: 'Android VSCU Device',                      unit: 'per unit',    price: 30000, img: '' },
+        { id: 'vscu-device', name: 'CRV VSCU Comstore Device',         unit: 'per unit',    price: 15000, img: '' }
       ],
       arduino: [
-        { id: 'ard-uno',      name: 'Arduino Uno R3 Board',              unit: 'per unit', price: 2500 },
-        { id: 'ard-bread',    name: 'Breadboard (830 Tie-Points)',       unit: 'per unit', price: 600 },
-        { id: 'ard-jumpers',  name: 'Jumper Wire Pack (M-M/M-F/F-F)',    unit: 'per pack', price: 300 },
-        { id: 'ard-resistors', name: 'Resistor Pack (Assorted)',        unit: 'per pack', price: 350 },
-        { id: 'ard-leds',     name: 'LED Pack (Assorted Colours)',       unit: 'per pack', price: 300 },
-        { id: 'ard-servo',    name: 'SG90 Micro Servo Motor',            unit: 'per unit', price: 800 },
-        { id: 'ard-motor',    name: 'DC Motor & Wheel Kit',              unit: 'per kit',  price: 1200 },
-        { id: 'ard-ultra',    name: 'Ultrasonic Distance Sensor',        unit: 'per unit', price: 500 },
-        { id: 'ard-lcd',      name: '16x2 LCD Display (I2C)',            unit: 'per unit', price: 1100 },
-        { id: 'ard-chassis',  name: 'Robotics Starter Chassis Kit',      unit: 'per kit',  price: 3500 },
-        { id: 'ard-button',   name: 'Push Button (Tactile, 4-pin)',      unit: 'per pack', price: 200 },
-        { id: 'ard-pot',      name: 'Potentiometer (10K)',               unit: 'per unit', price: 150 },
-        { id: 'ard-buzzer',   name: 'Piezo Buzzer',                      unit: 'per unit', price: 150 },
-        { id: 'ard-traffic',  name: 'Traffic Light LED Module',          unit: 'per unit', price: 450 }
+        { id: 'ard-uno',      name: 'Arduino Uno R3 Board',              unit: 'per unit', price: 2500, img: '' },
+        { id: 'ard-bread',    name: 'Breadboard (830 Tie-Points)',       unit: 'per unit', price: 600, img: 'breadboard.jpeg' },
+        { id: 'ard-jumpers',  name: 'Jumper Wire Pack (M-M/M-F/F-F)',    unit: 'per pack', price: 300, img: 'jumper.jpeg' },
+        { id: 'ard-resistors', name: 'Resistor Pack (Assorted)',        unit: 'per pack', price: 350, img: '' },
+        { id: 'ard-leds',     name: 'LED Pack (Assorted Colours)',       unit: 'per pack', price: 300, img: '' },
+        { id: 'ard-servo',    name: 'SG90 Micro Servo Motor',            unit: 'per unit', price: 800, img: '' },
+        { id: 'ard-motor',    name: 'DC Motor & Wheel Kit',              unit: 'per kit',  price: 1200, img: '' },
+        { id: 'ard-ultra',    name: 'Ultrasonic Distance Sensor',        unit: 'per unit', price: 500, img: '' },
+        { id: 'ard-lcd',      name: '16x2 LCD Display (I2C)',            unit: 'per unit', price: 1100, img: '' },
+        { id: 'ard-chassis',  name: 'Robotics Starter Chassis Kit',      unit: 'per kit',  price: 3500, img: '' },
+        { id: 'ard-button',   name: 'Push Button (Tactile, 4-pin)',      unit: 'per pack', price: 200, img: '' },
+        { id: 'ard-pot',      name: 'Potentiometer (10K)',               unit: 'per unit', price: 150, img: '' },
+        { id: 'ard-buzzer',   name: 'Piezo Buzzer',                      unit: 'per unit', price: 150, img: '' },
+        { id: 'ard-traffic',  name: 'Traffic Light LED Module',          unit: 'per unit', price: 450, img: '' }
       ],
       services: [
         { id: 'cctv-install', name: 'CCTV Installation & Maintenance', unit: 'per visit',   price: 8000 },
@@ -443,11 +462,30 @@
       const aWrap = document.getElementById('catalogArduino');
       const sWrap = document.getElementById('catalogServices');
       const eWrap = document.getElementById('catalogEducation');
-      function row(item, group) {
+      function row(item, group, layout) {
         state[item.id] = { selected: false, qty: 1, item, group };
         const el = document.createElement('div');
-        el.className = 'catalog-item';
         el.id = 'row-' + item.id;
+        if (layout === 'grid') {
+          el.className = 'catalog-card';
+          el.innerHTML = `
+            <label class="catalog-photo">
+              <input type="checkbox" class="catalog-check" data-id="${item.id}">
+              ${item.img ? `<img src="${item.img}" alt="${item.name}" loading="lazy">` : `<span class="catalog-photo-placeholder">Photo coming soon</span>`}
+            </label>
+            <div class="catalog-card-body">
+              <strong>${item.name}</strong>
+              <span>${item.unit}</span>
+              <div class="catalog-price">${fmt(item.price)}</div>
+              <div class="catalog-qty">
+                <button type="button" class="qty-btn" data-id="${item.id}" data-dir="-1">−</button>
+                <span class="qty-val" id="qty-${item.id}">1</span>
+                <button type="button" class="qty-btn" data-id="${item.id}" data-dir="1">+</button>
+              </div>
+            </div>`;
+          return el;
+        }
+        el.className = 'catalog-item';
         el.innerHTML = `
           <input type="checkbox" class="catalog-check" data-id="${item.id}">
           <div class="catalog-info"><strong>${item.name}</strong><span>${item.unit}</span></div>
@@ -459,10 +497,10 @@
           </div>`;
         return el;
       }
-      CATALOG.products.forEach(item => pWrap.appendChild(row(item, 'products')));
-      CATALOG.arduino.forEach(item => aWrap.appendChild(row(item, 'arduino')));
-      CATALOG.services.forEach(item => sWrap.appendChild(row(item, 'services')));
-      CATALOG.education.forEach(item => eWrap.appendChild(row(item, 'education')));
+      CATALOG.products.forEach(item => pWrap.appendChild(row(item, 'products', 'grid')));
+      CATALOG.arduino.forEach(item => aWrap.appendChild(row(item, 'arduino', 'grid')));
+      CATALOG.services.forEach(item => sWrap.appendChild(row(item, 'services', 'list')));
+      CATALOG.education.forEach(item => eWrap.appendChild(row(item, 'education', 'list')));
     }
     renderCatalog();
 
